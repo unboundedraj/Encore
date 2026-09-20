@@ -7,7 +7,13 @@
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
+    "composite": true,
+    // Must live inside outDir. If it sits outside, `rm -rf dist` leaves stale
+    // incremental state behind and the next build exits 0 while emitting
+    // nothing -- which then breaks every consumer of this package.
+    "tsBuildInfoFile": "dist/.tsbuildinfo",
     "declaration": true,
+    "declarationMap": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true

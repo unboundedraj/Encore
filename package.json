@@ -8,7 +8,8 @@
     "shared"
   ],
   "scripts": {
-    "dev": "concurrently -n frontend,backend -c blue,green \"npm run dev -w frontend\" \"npm run dev -w backend\"",
+    "predev": "npm run build -w shared",
+    "dev": "concurrently -n shared,frontend,backend -c magenta,blue,green \"npm run dev -w shared\" \"npm run dev -w frontend\" \"npm run dev -w backend\"",
     "build": "npm run build -w shared && npm run build -w frontend && npm run build -w backend",
     "lint": "npm run lint -w frontend && npm run lint -w backend"
   },
