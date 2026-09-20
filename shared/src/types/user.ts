@@ -1,8 +1,8 @@
+/** Row in the Postgres `encore_users` table. `id` is the Firebase UID. */
 export interface User {
   id: string;
-  firebaseUid: string;
   email: string;
-  displayName: string;
-  role: "customer" | "admin";
-  createdAt: string;
+  /** Null until the user sets a display name; Firebase does not require one. */
+  name: string | null;
+  created_at: string;
 }
