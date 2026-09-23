@@ -75,10 +75,29 @@ npm run dev -w backend
 npm run build
 ```
 
+## Data model
+
+The schema and the reasoning behind it are documented in
+[backend/docs/schema.md](backend/docs/schema.md) — in particular how assigned
+seating and general admission coexist without one polluting the other, and how
+double-booking is made structurally impossible.
+
+All Postgres objects — tables, enum types, constraints, indexes — are prefixed
+`encore_`, because this Supabase project shares its `public` schema with another
+application. The MongoDB side is unaffected.
+
+- Postgres migrations: `backend/supabase/migrations/` — applied to the live
+  project with `npm run db:push -w backend` (dry run: `db:diff`); verify with
+  `npm run verify:live -w backend`
+- MongoDB catalog model: `backend/src/models/Content.ts`
+- Shared types mirroring both: `shared/src/types/`
+
 ## Status / TBD
 
-- [ ] Design and implement the Supabase schema (users, bookings, payments)
-- [ ] Design and implement the MongoDB collections (movies, events, venues)
+- [x] Design the Supabase schema (users, venues, screens, seats, shows, bookings, payments)
+- [x] Design the MongoDB `content` collection (movies, events)
+- [x] Apply the migrations to a Supabase project and wire up the connection
+- [ ] Connect MongoDB
 - [ ] Wire up Firebase Auth on frontend and backend
 - [ ] Implement Redis-backed seat locking
 - [ ] Integrate Stripe checkout and webhooks
