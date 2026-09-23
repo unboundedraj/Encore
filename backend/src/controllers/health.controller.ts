@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import { supabase } from "../config/supabase";
 
 type DependencyStatus = {
@@ -43,20 +44,65 @@ async function probeSupabase(): Promise<DependencyStatus> {
 }
 
 /**
+ * Runs a real command against the server rather than reading
+ * `connection.readyState`. readyState is a local cached flag: it still says
+ * "connected" while the network is gone, right up until the driver notices.
+ *
+ * One honest caveat, unlike the Supabase probe: Mongo creates collections
+ * lazily, so querying a missing collection succeeds and returns nothing. This
+ * proves reachability, authentication and that the named database is usable --
+ * it cannot prove the catalog has been populated.
+ */
+async function probeMongo(): Promise<DependencyStatus> {
+  const startedAt = Date.now();
+  try {
+    const db = mongoose.connection.db;
+    if (!db) {
+      return {
+        status: "down",
+        latencyMs: Date.now() - startedAt,
+        error: "no active connection",
+      };
+    }
+    // ping is a genuine round-trip to the server and is authenticated against
+    // this connection's database.
+    await Promise.race([
+      db.command({ ping: 1 }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("probe timed out")), PROBE_TIMEOUT_MS)
+      ),
+    ]);
+    return { status: "up", latencyMs: Date.now() - startedAt };
+  } catch (err) {
+    return {
+      status: "down",
+      latencyMs: Date.now() - startedAt,
+      error: err instanceof Error ? err.message : "unknown error",
+    };
+  }
+}
+
+/**
  * Reports "degraded" rather than "ok" when a dependency is unreachable, so a
  * load balancer or uptime check sees the difference between "the process is
  * alive" and "the process can actually serve requests". Still returns 200 on
  * degraded -- the process is healthy and should not be restarted or pulled
- * from rotation just because the database is briefly unreachable. 503 is
+ * from rotation just because a database is briefly unreachable. 503 is
  * reserved for the service being genuinely unable to serve.
+ *
+ * The two probes run concurrently and are reported independently: one database
+ * being down must not hide the state of the other.
  */
 export async function getHealth(_req: Request, res: Response) {
-  const supabaseStatus = await probeSupabase();
-  const degraded = supabaseStatus.status !== "up";
+  const [supabaseStatus, mongodbStatus] = await Promise.all([
+    probeSupabase(),
+    probeMongo(),
+  ]);
+  const degraded = supabaseStatus.status !== "up" || mongodbStatus.status !== "up";
 
   res.status(200).json({
     status: degraded ? "degraded" : "ok",
     uptimeSeconds: Math.floor(process.uptime()),
-    dependencies: { supabase: supabaseStatus },
+    dependencies: { supabase: supabaseStatus, mongodb: mongodbStatus },
   });
 }
