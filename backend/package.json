@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "db:diff": "node scripts/db.mjs diff",
     "db:push": "node scripts/db.mjs push",
-    "verify:live": "ts-node --transpile-only src/tests/liveSchema.ts"
+    "verify:live": "ts-node --transpile-only src/tests/liveSchema.ts",
+    "verify:mongo": "ts-node --transpile-only src/tests/liveMongo.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
