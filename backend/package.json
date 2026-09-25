@@ -12,7 +12,8 @@
     "db:push": "node scripts/db.mjs push",
     "verify:live": "ts-node --transpile-only src/tests/liveSchema.ts",
     "verify:mongo": "ts-node --transpile-only src/tests/liveMongo.ts",
-    "test:unit": "ts-node --transpile-only src/tests/auth.test.ts"
+    "test:unit": "ts-node --transpile-only src/tests/auth.test.ts",
+    "seed:content": "ts-node --transpile-only src/scripts/seedContent.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
