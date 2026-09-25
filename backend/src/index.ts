@@ -3,6 +3,7 @@ import express from "express";
 import { env } from "./config/env";
 import { connectMongo } from "./config/mongodb";
 import { errorHandler } from "./middleware/errorHandler";
+import contentRoutes from "./routes/content.routes";
 import healthRoutes from "./routes/health.routes";
 import meRoutes from "./routes/me.routes";
 
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/health", healthRoutes);
+app.use("/api/content", contentRoutes);
 app.use("/api/me", meRoutes);
 
 app.use(errorHandler);
