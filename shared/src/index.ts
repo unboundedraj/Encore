@@ -1,5 +1,8 @@
 export * from "./types/enums";
 
+// Transport shapes, independent of which database backs them.
+export * from "./types/api";
+
 // Postgres (Supabase) row types -- snake_case, matching the column names.
 export * from "./types/booking";
 export * from "./types/payment";
