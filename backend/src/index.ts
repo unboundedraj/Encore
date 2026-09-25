@@ -6,6 +6,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import contentRoutes from "./routes/content.routes";
 import healthRoutes from "./routes/health.routes";
 import meRoutes from "./routes/me.routes";
+import showRoutes from "./routes/show.routes";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/api/health", healthRoutes);
 app.use("/api/content", contentRoutes);
+app.use("/api/shows", showRoutes);
 app.use("/api/me", meRoutes);
 
 app.use(errorHandler);
