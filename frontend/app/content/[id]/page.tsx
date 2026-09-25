@@ -2,7 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Content } from "shared";
+import { ShowtimesList } from "@/components/ShowtimesList";
 import { fetchContentById } from "@/lib/content-api";
+import { fetchShowsForContent } from "@/lib/show-api";
 
 type Params = Promise<{ id: string }>;
 
@@ -56,6 +58,10 @@ export default async function ContentDetailPage({ params }: { params: Params }) 
   // A missing or malformed id renders the real 404 page and returns a 404
   // status, rather than a 200 with an error message on it.
   if (!item) notFound();
+
+  // Independent fetch, not embedded in the content document: shows live in
+  // Postgres and content lives in Mongo, joined only by this id at read time.
+  const shows = await fetchShowsForContent(item._id);
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
@@ -114,11 +120,14 @@ export default async function ContentDetailPage({ params }: { params: Params }) 
             </a>
           ) : null}
 
-          {/* Showtimes and seat selection are the next step -- they need the
-              Postgres shows/venues data the frontend has not touched yet. */}
-          <p className="mt-6 text-xs text-black/40 dark:text-white/40">
-            Showtimes and booking coming soon.
-          </p>
+          <section className="mt-8">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-black/45 dark:text-white/45">
+              Showtimes
+            </h2>
+            <div className="mt-3">
+              <ShowtimesList shows={shows} />
+            </div>
+          </section>
         </div>
       </div>
     </main>
