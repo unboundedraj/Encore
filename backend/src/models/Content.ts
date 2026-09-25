@@ -110,9 +110,22 @@ const contentSchema = new Schema<ContentBaseDoc>(baseFields, {
 });
 
 // Catalog search. Weighted so a title match outranks a description match.
+//
+// language_override is redirected to a field that does not exist on purpose.
+// MongoDB reads the *document's* `language` field to pick a stemmer, and a
+// movie's `language` is an ISO 639-1 code for the film's spoken language --
+// entirely unrelated. Left at its default, inserting a film in Malayalam fails
+// outright with `language override unsupported: ml`, because Mongo has no
+// Malayalam stemmer. Pointing the override at an unused field makes every
+// document use default_language and leaves our field as pure domain data.
 contentSchema.index(
   { title: "text", description: "text" },
-  { weights: { title: 10, description: 1 }, name: "content_search_idx" }
+  {
+    weights: { title: 10, description: 1 },
+    name: "content_search_idx",
+    default_language: "english",
+    language_override: "_searchLanguage",
+  }
 );
 // "All movies" / "all events" listing pages, newest first.
 contentSchema.index({ type: 1, createdAt: -1 });
