@@ -8,6 +8,7 @@ export * from "./types/booking";
 export * from "./types/payment";
 export * from "./types/seat";
 export * from "./types/show";
+export * from "./types/show-views";
 export * from "./types/user";
 export * from "./types/venue";
 
