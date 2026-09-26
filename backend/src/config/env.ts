@@ -21,4 +21,8 @@ export const env = {
   // Must match the pinned frontend dev port (frontend/package.json), not
   // Next's default 3000 -- this drives Stripe's success/cancel redirect.
   frontendUrl: process.env.FRONTEND_URL ?? "http://localhost:3002",
+  // Backend-only. The secret key can create charges; the webhook secret is the
+  // only thing distinguishing a real Stripe callback from anyone's POST.
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
 };
