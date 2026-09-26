@@ -109,6 +109,36 @@ export function createRequireAuth(verify: TokenVerifier) {
 export const requireAuth = createRequireAuth(realVerifyIdToken);
 
 /**
+ * Populates req.user when a valid token is present, and carries on regardless
+ * when it is not.
+ *
+ * For routes that are public but render differently for a signed-in caller --
+ * the seat map needs to mark which holds are yours, without making browsing
+ * require an account.
+ *
+ * A malformed or expired token is treated as anonymous rather than rejected.
+ * The caller asked for a public resource; refusing it because a stale token
+ * happened to be attached would be a worse answer than serving the public
+ * view. Routes that actually need identity use requireAuth instead.
+ */
+export function createOptionalAuth(verify: TokenVerifier) {
+  return async function optionalAuth(req: Request, _res: Response, next: NextFunction) {
+    const [scheme, token] = (req.headers.authorization ?? "").split(" ");
+    if (scheme !== "Bearer" || !token) return next();
+
+    try {
+      req.user = toAuthenticatedUser(await verify(token));
+    } catch {
+      // Intentionally silent: an anonymous view is a valid outcome here, not
+      // an error worth logging on every crawler request.
+    }
+    return next();
+  };
+}
+
+export const optionalAuth = createOptionalAuth(realVerifyIdToken);
+
+/**
  * How long a uid is treated as already-provisioned before we write again.
  * Bounds the redundant-write rate to one per uid per window per process; the
  * cost of being wrong is a single harmless extra upsert.
