@@ -175,9 +175,13 @@ async function refund(session: Stripe.Checkout.Session, bookingId: string): Prom
   const paymentIntent =
     typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
 
+  // [REFUND_FAILED] is a deliberately fixed, greppable prefix -- every branch
+  // below that leaves money uncollected-but-unrefunded uses it, with the
+  // booking id and whatever Stripe id is available, so this is one log query
+  // away from being wired into real alerting later without touching this code.
   if (!paymentIntent) {
     console.error(
-      `[webhook] REFUND REQUIRED for booking ${bookingId}: seats were taken and no payment_intent was present on session ${session.id}`
+      `[REFUND_FAILED] booking=${bookingId} session=${session.id}: seats were taken and no payment_intent was present on the session`
     );
     return;
   }
@@ -193,7 +197,7 @@ async function refund(session: Stripe.Checkout.Session, bookingId: string): Prom
     );
   } catch (err) {
     console.error(
-      `[webhook] REFUND FAILED for booking ${bookingId} (payment_intent ${paymentIntent}) -- needs manual action:`,
+      `[REFUND_FAILED] booking=${bookingId} session=${session.id} payment_intent=${paymentIntent} -- needs manual action:`,
       err
     );
   }
