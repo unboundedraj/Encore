@@ -7,7 +7,7 @@
  * during rendering.
  */
 
-import type { Content, ContentType, EventCategory, Paginated } from "shared";
+import type { CitySummary, Content, ContentType, EventCategory, Paginated } from "shared";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
@@ -26,6 +26,8 @@ const CACHE = { next: { revalidate: 300, tags: ["content"] } } satisfies Request
 export interface ContentQuery {
   type?: ContentType;
   category?: EventCategory;
+  /** Restricts to titles with at least one upcoming show in this city. */
+  city?: string;
   page?: number;
   limit?: number;
 }
@@ -34,6 +36,7 @@ export async function fetchContentList(query: ContentQuery = {}): Promise<Pagina
   const params = new URLSearchParams();
   if (query.type) params.set("type", query.type);
   if (query.category) params.set("category", query.category);
+  if (query.city) params.set("city", query.city);
   if (query.page) params.set("page", String(query.page));
   if (query.limit) params.set("limit", String(query.limit));
 
@@ -46,6 +49,24 @@ export async function fetchContentList(query: ContentQuery = {}): Promise<Pagina
     throw new Error(`Catalog request failed (${res.status})`);
   }
   return (await res.json()) as Paginated<Content>;
+}
+
+/**
+ * Cities that currently have something on.
+ *
+ * Falls back to an empty list rather than throwing: the picker has a static
+ * list of its own to fall back on, and a city lookup failing is no reason to
+ * take down a page that otherwise renders fine.
+ */
+export async function fetchCities(): Promise<CitySummary[]> {
+  try {
+    const res = await fetch(`${API_URL}/api/cities`, CACHE);
+    if (!res.ok) return [];
+    const body = (await res.json()) as { items: CitySummary[] };
+    return body.items ?? [];
+  } catch {
+    return [];
+  }
 }
 
 /** Returns null for a missing item so the page can call notFound(). */

@@ -22,8 +22,16 @@ const SHOWS_LIST_CACHE = { next: { revalidate: 60, tags: ["shows"] } } satisfies
  */
 const LIVE = { cache: "no-store" } satisfies RequestInit;
 
-export async function fetchShowsForContent(contentId: string): Promise<ShowListItem[]> {
-  const res = await fetch(`${API_URL}/api/content/${encodeURIComponent(contentId)}/shows`, SHOWS_LIST_CACHE);
+/** `city` restricts to venues in that city; omit it for every city. */
+export async function fetchShowsForContent(
+  contentId: string,
+  city?: string
+): Promise<ShowListItem[]> {
+  const qs = city ? `?city=${encodeURIComponent(city)}` : "";
+  const res = await fetch(
+    `${API_URL}/api/content/${encodeURIComponent(contentId)}/shows${qs}`,
+    SHOWS_LIST_CACHE
+  );
   if (!res.ok) throw new Error(`Failed to load showtimes (${res.status})`);
   const body = (await res.json()) as { items: ShowListItem[] };
   return body.items;
