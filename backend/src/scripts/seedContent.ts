@@ -194,6 +194,45 @@ const MOVIES: Seed<MovieDoc>[] = [
     cast: ["Bhumi Pednekar", "Kumud Mishra"],
     language: "hi",
   },
+  {
+    _id: "65f1a2b3c4d5e6f70100000d",
+    type: "movie",
+    title: "Vanaputra",
+    description:
+      "An Ayodhya scooter mechanic learns his blood carries an old vanara oath the night a black-market relic ring wakes something that was supposed to stay sealed.",
+    posterUrl: poster("vanaputra"),
+    trailerUrl: TRAILER,
+    genres: ["Mythology", "Action", "Fantasy"],
+    durationMinutes: 149,
+    cast: ["Vijay Deverakonda", "Nayanthara", "Prakash Raj"],
+    language: "te",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70100000e",
+    type: "movie",
+    title: "Purvanchal",
+    description:
+      "A small-time coal contractor inherits his murdered uncle's seat at the table, and three rival clans and a bought SP all decide he is exactly the puppet they need. He decides otherwise.",
+    posterUrl: poster("purvanchal"),
+    trailerUrl: TRAILER,
+    genres: ["Crime", "Drama", "Action"],
+    durationMinutes: 162,
+    cast: ["Randeep Hooda", "Huma Qureshi", "Raghubir Yadav"],
+    language: "hi",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70100000f",
+    type: "movie",
+    title: "Mahamari",
+    description:
+      "Six hours after a containment breach at a Pune biotech park, a night-shift security guard and a stranded delivery rider are the last two people inside the perimeter fence who are not yet infected.",
+    posterUrl: poster("mahamari"),
+    trailerUrl: TRAILER,
+    genres: ["Horror", "Sci-Fi", "Thriller"],
+    durationMinutes: 118,
+    cast: ["Vikrant Massey", "Shweta Tripathi Sharma", "Amit Sadh"],
+    language: "hi",
+  },
 ];
 
 const EVENTS: Seed<EventDoc>[] = [
@@ -339,6 +378,42 @@ const EVENTS: Seed<EventDoc>[] = [
     trailerUrl: null,
     genres: ["Standup", "Open Mic"],
     performer: "Habitat Regulars",
+    category: "standup",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70200000d",
+    type: "event",
+    title: "Samay Raina: Chessboard Therapy",
+    description:
+      "An hour on chess trauma, YouTube comment-section warfare, and why losing on stream is funnier than winning.",
+    posterUrl: poster("samay-raina-chessboard-therapy"),
+    trailerUrl: TRAILER,
+    genres: ["Standup", "Hindi"],
+    performer: "Samay Raina",
+    category: "standup",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70200000e",
+    type: "event",
+    title: "Gaurav Kapoor: Mic Drop",
+    description:
+      "Commentary boxes, award-show green rooms and thirty years of overhearing things he was never supposed to hear.",
+    posterUrl: poster("gaurav-kapoor-mic-drop"),
+    trailerUrl: null,
+    genres: ["Standup", "English"],
+    performer: "Gaurav Kapoor",
+    category: "standup",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70200000f",
+    type: "event",
+    title: "Abhishek Upmanyu: Unfiltered",
+    description:
+      "New material on Delhi landlords, gym bros, and the group chat that refuses to let an argument die.",
+    posterUrl: poster("abhishek-upmanyu-unfiltered"),
+    trailerUrl: TRAILER,
+    genres: ["Standup", "Hindi"],
+    performer: "Abhishek Upmanyu",
     category: "standup",
   },
 ];
