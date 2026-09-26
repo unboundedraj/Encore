@@ -70,74 +70,80 @@ export function QuantityPicker({ availableCapacity, pricePerTicket, showId }: Qu
   }
 
   return (
-    <div>
-      {soldOut ? (
-        <p
-          role="status"
-          className="rounded-md bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400"
-        >
-          Sold out.
-        </p>
-      ) : (
-        <>
-          <p className="text-sm text-black/55 dark:text-white/55">
-            {availableCapacity} ticket{availableCapacity === 1 ? "" : "s"} available
+    <div className="mx-auto max-w-md">
+      <div className="rounded-lg bg-surface p-6 shadow-sm">
+        {soldOut ? (
+          <p role="status" className="rounded-md bg-accent/10 px-3 py-3 text-center text-sm font-medium text-accent-dark">
+            Sold out
           </p>
-          <div className="mt-3 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              disabled={quantity <= 1 || submitting}
-              aria-label="Decrease quantity"
-              className="h-9 w-9 rounded-md border border-black/15 text-lg leading-none disabled:opacity-30 dark:border-white/20"
-            >
-              &minus;
-            </button>
-            <span className="w-8 text-center text-sm font-medium" aria-live="polite">
-              {quantity}
-            </span>
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => Math.min(maxSelectable, q + 1))}
-              disabled={quantity >= maxSelectable || submitting}
-              aria-label="Increase quantity"
-              className="h-9 w-9 rounded-md border border-black/15 text-lg leading-none disabled:opacity-30 dark:border-white/20"
-            >
-              +
-            </button>
-            {quantity >= maxSelectable && maxSelectable < availableCapacity ? (
-              <span className="text-xs text-black/40 dark:text-white/40">
-                Max {MAX_PER_ORDER} per order
+        ) : (
+          <>
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-sm font-semibold">General admission</span>
+              <span className="text-sm font-semibold text-accent">
+                {formatCurrency(pricePerTicket)}
               </span>
+            </div>
+            <p className="mt-1 text-xs text-muted">
+              {availableCapacity.toLocaleString("en-IN")} ticket
+              {availableCapacity === 1 ? "" : "s"} available
+            </p>
+
+            <div className="mt-5 flex items-center justify-center gap-5">
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                disabled={quantity <= 1 || submitting}
+                aria-label="Decrease quantity"
+                className="h-10 w-10 rounded-full border border-hairline text-xl leading-none text-foreground transition-colors hover:border-accent hover:text-accent disabled:opacity-30 disabled:hover:border-hairline disabled:hover:text-foreground"
+              >
+                &minus;
+              </button>
+              <span className="w-10 text-center text-2xl font-bold tabular-nums" aria-live="polite">
+                {quantity}
+              </span>
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => Math.min(maxSelectable, q + 1))}
+                disabled={quantity >= maxSelectable || submitting}
+                aria-label="Increase quantity"
+                className="h-10 w-10 rounded-full border border-hairline text-xl leading-none text-foreground transition-colors hover:border-accent hover:text-accent disabled:opacity-30 disabled:hover:border-hairline disabled:hover:text-foreground"
+              >
+                +
+              </button>
+            </div>
+
+            {quantity >= maxSelectable && maxSelectable < availableCapacity ? (
+              <p className="mt-3 text-center text-xs text-muted">
+                Maximum {MAX_PER_ORDER} tickets per order
+              </p>
             ) : null}
-          </div>
-        </>
-      )}
+          </>
+        )}
 
-      {error ? (
-        <p
-          role="alert"
-          className="mt-4 rounded-md bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400"
-        >
-          {error}
-        </p>
-      ) : null}
-
-      <div className="mt-6 flex items-center justify-between border-t border-black/10 pt-4 dark:border-white/15">
-        <div>
-          <p className="text-sm text-black/55 dark:text-white/55">
-            {quantity} ticket{quantity === 1 ? "" : "s"}
+        {error ? (
+          <p role="alert" className="mt-4 rounded-md bg-accent/10 px-3 py-2 text-sm text-accent-dark">
+            {error}
           </p>
-          <p className="text-lg font-semibold">{formatCurrency(total)}</p>
+        ) : null}
+
+        <div className="mt-6 border-t border-hairline pt-4">
+          <div className="flex items-baseline justify-between">
+            <span className="text-sm text-muted">
+              {quantity} ticket{quantity === 1 ? "" : "s"}
+            </span>
+            <span className="text-xl font-bold">{formatCurrency(total)}</span>
+          </div>
+
+          <button
+            type="button"
+            disabled={quantity < 1 || submitting}
+            onClick={handleCheckout}
+            className="mt-4 w-full rounded-md bg-accent px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-hairline disabled:text-muted"
+          >
+            {submitting ? "Starting checkout…" : `Pay ${formatCurrency(total)}`}
+          </button>
         </div>
-        <button
-          type="button"
-          disabled={quantity < 1 || submitting}
-          onClick={handleCheckout}
-          className="rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          {submitting ? "Starting checkout…" : "Proceed to checkout"}
-        </button>
       </div>
     </div>
   );

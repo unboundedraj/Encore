@@ -32,10 +32,38 @@ function groupByRow(seats: SeatWithStatus[]): [string, SeatWithStatus[]][] {
     .map(([row, list]) => [row, [...list].sort((a, b) => a.seat_number - b.seat_number)]);
 }
 
+/**
+ * Contiguous blocks of rows that share a seat type, top to bottom.
+ *
+ * The seat map renders the screen at the bottom, so row A is the back of the
+ * hall -- which is where the expensive block sits in an Indian multiplex.
+ * There are only two seat types in the schema, so there are at most two zones;
+ * this groups rather than hardcodes that, so a layout with the premium rows
+ * somewhere else still renders correctly.
+ */
+function toZones(rows: [string, SeatWithStatus[]][]): {
+  seatType: "standard" | "premium";
+  rows: [string, SeatWithStatus[]][];
+}[] {
+  const zones: { seatType: "standard" | "premium"; rows: [string, SeatWithStatus[]][] }[] = [];
+  for (const row of rows) {
+    const seatType = row[1][0]?.seat_type ?? "standard";
+    const last = zones[zones.length - 1];
+    if (last && last.seatType === seatType) last.rows.push(row);
+    else zones.push({ seatType, rows: [row] });
+  }
+  return zones;
+}
+
+const ZONE_LABELS: Record<"standard" | "premium", string> = {
+  premium: "Premium",
+  standard: "Classic",
+};
+
 function statusLabel(status: SeatStatus): string {
   switch (status) {
     case "booked":
-      return "booked";
+      return "sold";
     case "held_by_other":
       return "temporarily held by another customer";
     case "held_by_you":
@@ -45,29 +73,28 @@ function statusLabel(status: SeatStatus): string {
   }
 }
 
-function seatClassName(status: SeatStatus, seatType: "standard" | "premium", isPending: boolean): string {
-  const base = "aspect-square rounded-t-md text-[10px] font-medium transition-colors";
-  if (isPending) return `${base} cursor-wait bg-black/10 text-black/30 dark:bg-white/10 dark:text-white/25`;
+function seatClassName(status: SeatStatus, isPending: boolean): string {
+  const base =
+    "flex h-6 w-6 items-center justify-center rounded-[4px] border text-[9px] font-medium transition-colors sm:h-7 sm:w-7 sm:text-[10px]";
+  if (isPending) return `${base} cursor-wait border-hairline bg-hairline text-muted/50`;
   switch (status) {
     case "booked":
-      return `${base} cursor-not-allowed bg-black/10 text-black/25 dark:bg-white/10 dark:text-white/20`;
+      return `${base} cursor-not-allowed border-transparent bg-hairline text-muted/40`;
     case "held_by_other":
-      // Distinct from booked and animated, so it reads as "temporary, might
-      // free up" rather than permanently gone.
-      return `${base} cursor-not-allowed animate-pulse bg-orange-400/25 text-orange-700/70 dark:bg-orange-400/15 dark:text-orange-300/70`;
+      // Distinct from sold and animated, so it reads as "temporary, might free
+      // up" rather than permanently gone.
+      return `${base} animate-pulse cursor-not-allowed border-warn/40 bg-warn/20 text-warn`;
     case "held_by_you":
-      return `${base} bg-foreground text-background shadow-sm`;
+      return `${base} border-ok bg-ok text-white`;
     default:
-      return seatType === "premium"
-        ? `${base} bg-amber-400/30 text-amber-900 hover:bg-amber-400/50 dark:text-amber-200`
-        : `${base} bg-black/5 text-black/70 hover:bg-black/15 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/20`;
+      return `${base} border-ok/50 bg-white text-ok hover:bg-ok/10`;
   }
 }
 
-function Legend({ swatchClassName, label }: { swatchClassName: string; label: string }) {
+function Legend({ swatch, label }: { swatch: string; label: string }) {
   return (
-    <span className="flex items-center gap-1.5">
-      <span className={`h-3 w-3 rounded ${swatchClassName}`} />
+    <span className="flex items-center gap-1.5 text-xs text-muted">
+      <span className={`h-3.5 w-3.5 rounded-[3px] border ${swatch}`} />
       {label}
     </span>
   );
@@ -149,13 +176,13 @@ export function SeatMap({ seats: initialSeats, pricePerSeat, showId }: SeatMapPr
   }, [holdExpiresAt]);
 
   const rows = useMemo(() => groupByRow(seatList), [seatList]);
+  const zones = useMemo(() => toZones(rows), [rows]);
   // Sized from the data rather than assumed, so a screen with a different
   // layout still lines seats up into columns correctly.
   const columns = useMemo(() => Math.max(1, ...seatList.map((s) => s.seat_number)), [seatList]);
   // A visual centre aisle, purely presentational -- it has no effect on which
   // seats exist or can be booked, only where the gap in the row renders.
-  const aisleAfter = columns >= 4 ? Math.ceil(columns / 2) : null;
-  const rowCenter = (columns + 1) / 2;
+  const aisleAfter = columns >= 8 ? Math.ceil(columns / 2) : null;
 
   const displayStatus = useCallback(
     (seat: SeatWithStatus): SeatStatus => (selected.has(seat.id) ? "held_by_you" : seat.status),
@@ -169,36 +196,65 @@ export function SeatMap({ seats: initialSeats, pricePerSeat, showId }: SeatMapPr
    * admission does not get the same treatment because there is no discrete
    * unit to click, only a quantity (see QuantityPicker).
    */
-  const toggle = useCallback(async (seat: SeatWithStatus) => {
-    const status = displayStatus(seat);
-    if (status === "booked" || status === "held_by_other" || pending.has(seat.id)) return;
+  const toggle = useCallback(
+    async (seat: SeatWithStatus) => {
+      const status = displayStatus(seat);
+      if (status === "booked" || status === "held_by_other" || pending.has(seat.id)) return;
 
-    if (!user) {
-      router.push(`/login?next=${encodeURIComponent(pathname)}`);
-      return;
-    }
-
-    setError(null);
-    setPending((prev) => new Set(prev).add(seat.id));
-
-    if (selected.has(seat.id)) {
-      const next = new Set(selected);
-      next.delete(seat.id);
-      setSelected(next);
-      if (next.size === 0) {
-        // Nothing left to hold, so the countdown showing time on a hold that
-        // no longer exists would be actively misleading -- stop it rather
-        // than let it keep ticking down toward an expiry that already
-        // stopped mattering.
-        setHoldExpiresAt(null);
-        setRemainingSeconds(null);
+      if (!user) {
+        router.push(`/login?next=${encodeURIComponent(pathname)}`);
+        return;
       }
+
+      setError(null);
+      setPending((prev) => new Set(prev).add(seat.id));
+
+      if (selected.has(seat.id)) {
+        const next = new Set(selected);
+        next.delete(seat.id);
+        setSelected(next);
+        if (next.size === 0) {
+          // Nothing left to hold, so the countdown showing time on a hold that
+          // no longer exists would be actively misleading -- stop it rather
+          // than let it keep ticking down toward an expiry that already
+          // stopped mattering.
+          setHoldExpiresAt(null);
+          setRemainingSeconds(null);
+        }
+        try {
+          await releaseSeats(showId, [seat.id]);
+        } catch {
+          // Non-fatal: releasing is a courtesy to other shoppers, not a safety
+          // requirement. Worst case the hold outlives the deselection by up to
+          // its TTL -- see lockService's failure-mode notes for why that is safe.
+        } finally {
+          setPending((prev) => {
+            const next2 = new Set(prev);
+            next2.delete(seat.id);
+            return next2;
+          });
+        }
+        return;
+      }
+
       try {
-        await releaseSeats(showId, [seat.id]);
-      } catch {
-        // Non-fatal: releasing is a courtesy to other shoppers, not a safety
-        // requirement. Worst case the hold outlives the deselection by up to
-        // its TTL -- see lockService's failure-mode notes for why that is safe.
+        const result = await holdSeats(showId, [seat.id]);
+        setSelected((prev) => new Set(prev).add(seat.id));
+        const expiresAt = new Date(result.expires_at);
+        setHoldExpiresAt(expiresAt);
+        // Set directly here rather than left for the ticking effect to fill in:
+        // that effect intentionally does nothing synchronous, so the display
+        // would otherwise sit blank for up to a second before its first tick.
+        setRemainingSeconds(Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / 1000)));
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 409) {
+          setSeatList((prev) =>
+            prev.map((s) => (s.id === seat.id ? { ...s, status: "held_by_other" } : s))
+          );
+          setError(`Seat ${seat.row_label}${seat.seat_number} was just taken by someone else.`);
+        } else {
+          setError(err instanceof Error ? err.message : "Could not hold that seat. Please try again.");
+        }
       } finally {
         setPending((prev) => {
           const next = new Set(prev);
@@ -206,35 +262,9 @@ export function SeatMap({ seats: initialSeats, pricePerSeat, showId }: SeatMapPr
           return next;
         });
       }
-      return;
-    }
-
-    try {
-      const result = await holdSeats(showId, [seat.id]);
-      setSelected((prev) => new Set(prev).add(seat.id));
-      const expiresAt = new Date(result.expires_at);
-      setHoldExpiresAt(expiresAt);
-      // Set directly here rather than left for the ticking effect to fill in:
-      // that effect intentionally does nothing synchronous, so the display
-      // would otherwise sit blank for up to a second before its first tick.
-      setRemainingSeconds(Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / 1000)));
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 409) {
-        setSeatList((prev) =>
-          prev.map((s) => (s.id === seat.id ? { ...s, status: "held_by_other" } : s))
-        );
-        setError(`Row ${seat.row_label} seat ${seat.seat_number} was just taken by someone else.`);
-      } else {
-        setError(err instanceof Error ? err.message : "Could not hold that seat. Please try again.");
-      }
-    } finally {
-      setPending((prev) => {
-        const next = new Set(prev);
-        next.delete(seat.id);
-        return next;
-      });
-    }
-  }, [showId, user, router, pathname, selected, pending, displayStatus]);
+    },
+    [displayStatus, pending, selected, user, router, pathname, showId]
+  );
 
   async function handleCheckout() {
     if (selected.size === 0 || submitting) return;
@@ -256,108 +286,136 @@ export function SeatMap({ seats: initialSeats, pricePerSeat, showId }: SeatMapPr
   }
 
   const total = selected.size * pricePerSeat;
+  const selectedLabels = useMemo(
+    () =>
+      seatList
+        .filter((s) => selected.has(s.id))
+        .sort((a, b) => a.row_label.localeCompare(b.row_label) || a.seat_number - b.seat_number)
+        .map((s) => `${s.row_label}${s.seat_number}`),
+    [seatList, selected]
+  );
 
   return (
-    <div>
-      {/* Curved screen indicator. A wide arc with only the top corners rounded
-          via an elliptical border-radius reads as a cinema screen without SVG
-          path math to get wrong. */}
-      <div className="mx-auto mb-9 flex max-w-lg flex-col items-center px-4">
-        <div
-          className="h-7 w-full border border-b-0 border-black/15 bg-gradient-to-b from-black/[.04] to-transparent dark:border-white/20 dark:from-white/[.06]"
-          style={{ borderRadius: "50% 50% 0 0 / 100% 100% 0 0" }}
-          aria-hidden="true"
-        />
-        <span className="mt-2 text-[10px] font-semibold uppercase tracking-[0.35em] text-black/35 dark:text-white/35">
-          Screen
-        </span>
+    <div className="pb-28">
+      <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pb-5">
+        <Legend swatch="border-ok/50 bg-white" label="Available" />
+        <Legend swatch="border-ok bg-ok" label="Selected" />
+        <Legend swatch="border-warn/40 bg-warn/20" label="Being booked" />
+        <Legend swatch="border-transparent bg-hairline" label="Sold" />
       </div>
 
-      <div className="flex flex-col items-center gap-2 overflow-x-auto pb-2">
-        {rows.map(([rowLabel, rowSeats]) => (
-          <div key={rowLabel} className="flex items-start gap-3">
-            <span className="w-4 shrink-0 pt-1 text-right text-[10px] font-medium text-black/40 dark:text-white/40">
-              {rowLabel}
-            </span>
+      {/* The hall. Horizontally scrollable, because a 20-seat row does not fit
+          a phone and squeezing it would make the seats untappable. */}
+      {/* w-max, not min-w-full: the block must size to its own content so the
+          auto margins can centre it when the hall is narrower than the page,
+          while still overflowing into a scroll when it is wider. */}
+      <div className="overflow-x-auto pb-4 no-scrollbar">
+        <div className="mx-auto w-max px-2">
+          {zones.map((zone, zoneIndex) => (
+            <div key={`${zone.seatType}-${zoneIndex}`} className="mb-5">
+              <div className="mb-2 flex items-center gap-3">
+                <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-wider text-muted">
+                  {ZONE_LABELS[zone.seatType]} — {formatCurrency(pricePerSeat)}
+                </span>
+                <span className="h-px flex-1 bg-hairline" />
+              </div>
 
-            <div className="flex items-start gap-1.5">
-              {rowSeats.map((seat) => {
-                const status = displayStatus(seat);
-                const isPending = pending.has(seat.id);
-                const isAisleGap = aisleAfter !== null && seat.seat_number === aisleAfter;
-                // A shallow parabola: seats near the row's centre sit closer to
-                // the screen, seats at the edges sit further back -- the same
-                // curvature stadium seating actually has, at a scale subtle
-                // enough to read as intentional rather than broken alignment.
-                const distanceFromCenter = Math.abs(seat.seat_number - rowCenter);
-                const curveOffsetPx = Math.round(distanceFromCenter * distanceFromCenter * 0.55);
+              <div className="flex flex-col items-center gap-1.5">
+                {zone.rows.map(([rowLabel, rowSeats]) => (
+                  <div key={rowLabel} className="flex items-center gap-2">
+                    <span className="w-4 shrink-0 text-right text-[10px] font-medium text-muted">
+                      {rowLabel}
+                    </span>
 
-                return (
-                  <div
-                    key={seat.id}
-                    style={{ marginRight: isAisleGap ? "0.85rem" : undefined }}
-                  >
-                    <button
-                      type="button"
-                      disabled={status === "booked" || status === "held_by_other" || isPending}
-                      aria-busy={isPending}
-                      onClick={() => toggle(seat)}
-                      style={{ marginTop: `${curveOffsetPx}px`, width: "1.65rem" }}
-                      aria-pressed={status === "held_by_you"}
-                      aria-label={`Row ${seat.row_label} seat ${seat.seat_number}, ${seat.seat_type}, ${statusLabel(status)}`}
-                      className={seatClassName(status, seat.seat_type, isPending)}
-                    >
-                      {seat.seat_number}
-                    </button>
+                    <div className="flex items-center gap-1">
+                      {rowSeats.map((seat) => {
+                        const status = displayStatus(seat);
+                        const isPending = pending.has(seat.id);
+                        const isAisle = aisleAfter !== null && seat.seat_number === aisleAfter;
+                        return (
+                          <div key={seat.id} style={{ marginRight: isAisle ? "1.25rem" : undefined }}>
+                            <button
+                              type="button"
+                              disabled={status === "booked" || status === "held_by_other" || isPending}
+                              aria-busy={isPending}
+                              onClick={() => toggle(seat)}
+                              aria-pressed={status === "held_by_you"}
+                              aria-label={`Row ${seat.row_label} seat ${seat.seat_number}, ${seat.seat_type}, ${statusLabel(status)}`}
+                              className={seatClassName(status, isPending)}
+                            >
+                              {seat.seat_number}
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <span className="w-4 shrink-0 text-left text-[10px] font-medium text-muted">
+                      {rowLabel}
+                    </span>
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
+          ))}
 
-            <span className="w-4 shrink-0 pt-1 text-left text-[10px] font-medium text-black/40 dark:text-white/40">
-              {rowLabel}
+          {/* Screen, at the bottom -- which is where a cinema booking flow puts
+              it, so row A reads as the back of the hall. */}
+          <div className="mx-auto mt-8 flex max-w-xl flex-col items-center px-4">
+            <div
+              className="h-2.5 w-full bg-linear-to-b from-foreground/25 to-transparent"
+              style={{ borderRadius: "50% 50% 0 0 / 100% 100% 0 0" }}
+              aria-hidden="true"
+            />
+            <span className="mt-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">
+              All eyes this way please
             </span>
           </div>
-        ))}
-      </div>
-
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-black/55 dark:text-white/55">
-        <Legend swatchClassName="bg-black/5 dark:bg-white/10" label="Standard" />
-        <Legend swatchClassName="bg-amber-400/30" label="Premium" />
-        <Legend swatchClassName="bg-foreground" label="Selected" />
-        <Legend swatchClassName="animate-pulse bg-orange-400/25" label="Being checked out" />
-        <Legend swatchClassName="bg-black/10 dark:bg-white/10" label="Booked" />
+        </div>
       </div>
 
       {error ? (
         <p
           role="alert"
-          className="mt-4 rounded-md bg-red-500/10 px-3 py-2 text-center text-sm text-red-600 dark:text-red-400"
+          className="mx-auto mt-4 max-w-xl rounded-md bg-accent/10 px-3 py-2 text-center text-sm text-accent-dark"
         >
           {error}
         </p>
       ) : null}
 
-      <div className="mt-6 flex items-center justify-between border-t border-black/10 pt-4 dark:border-white/15">
-        <div>
-          <p className="text-sm text-black/55 dark:text-white/55">
-            {selected.size} seat{selected.size === 1 ? "" : "s"} selected
-            {remainingSeconds !== null ? (
-              <span className="ml-2 tabular-nums text-black/40 dark:text-white/40">
-                &middot; hold expires in {formatCountdown(remainingSeconds)}
-              </span>
-            ) : null}
-          </p>
-          <p className="text-lg font-semibold">{formatCurrency(total)}</p>
+      {/* Sticky summary bar. A 280-seat hall means the top of the page is far
+          away by the time you have picked, so the total and the CTA follow. */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-hairline bg-surface/95 backdrop-blur-sm">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold">
+              {selected.size === 0
+                ? "Select your seats"
+                : `${selected.size} seat${selected.size === 1 ? "" : "s"} · ${selectedLabels.join(", ")}`}
+            </p>
+            <p className="text-xs text-muted">
+              {selected.size > 0 ? (
+                <span className="font-semibold text-foreground">{formatCurrency(total)}</span>
+              ) : (
+                <span>{formatCurrency(pricePerSeat)} per seat</span>
+              )}
+              {remainingSeconds !== null ? (
+                <span className="ml-2 tabular-nums">
+                  · held for {formatCountdown(remainingSeconds)}
+                </span>
+              ) : null}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            disabled={selected.size === 0 || submitting}
+            onClick={handleCheckout}
+            className="shrink-0 rounded-md bg-accent px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-hairline disabled:text-muted"
+          >
+            {submitting ? "Starting checkout…" : selected.size === 0 ? "Pay" : `Pay ${formatCurrency(total)}`}
+          </button>
         </div>
-        <button
-          type="button"
-          disabled={selected.size === 0 || submitting}
-          onClick={handleCheckout}
-          className="rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          {submitting ? "Starting checkout…" : "Proceed to checkout"}
-        </button>
       </div>
     </div>
   );
