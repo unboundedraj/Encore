@@ -2,8 +2,9 @@ import Link from "next/link";
 import type { ShowListItem } from "shared";
 import { formatCurrency } from "@/lib/utils";
 
-// All seed venues are in Bangalore. Hardcoding the zone is wrong the moment a
-// second region exists -- this should become per-venue once one does.
+// Every venue in the catalog is in India, and India has a single zone with no
+// DST, so one fixed zone is correct here. This becomes per-venue the moment a
+// venue exists outside it.
 const TIME_ZONE = "Asia/Kolkata";
 
 const dateKeyFormatter = new Intl.DateTimeFormat("en-CA", {
@@ -12,12 +13,9 @@ const dateKeyFormatter = new Intl.DateTimeFormat("en-CA", {
   month: "2-digit",
   day: "2-digit",
 });
-const dateHeadingFormatter = new Intl.DateTimeFormat("en-IN", {
-  timeZone: TIME_ZONE,
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-});
+const dayNameFormatter = new Intl.DateTimeFormat("en-IN", { timeZone: TIME_ZONE, weekday: "short" });
+const dayNumFormatter = new Intl.DateTimeFormat("en-IN", { timeZone: TIME_ZONE, day: "numeric" });
+const monthFormatter = new Intl.DateTimeFormat("en-IN", { timeZone: TIME_ZONE, month: "short" });
 const timeFormatter = new Intl.DateTimeFormat("en-IN", {
   timeZone: TIME_ZONE,
   hour: "numeric",
@@ -25,12 +23,20 @@ const timeFormatter = new Intl.DateTimeFormat("en-IN", {
   hour12: true,
 });
 
-/**
- * Groups by calendar date in TIME_ZONE. en-CA formats as YYYY-MM-DD, which
- * sorts correctly as a plain string -- convenient for a Map key, though the
- * shows themselves are already chronological from the API, so grouping
- * preserves that order without a separate sort.
- */
+interface ShowtimesListProps {
+  shows: ShowListItem[];
+  city: string;
+  /** Other cities this title is playing in, used only when `shows` is empty. */
+  otherCities?: string[];
+  /**
+   * Which date to show. Omitted means the earliest available -- the list is a
+   * server component, so switching dates is a link, not client state.
+   */
+  selectedDate?: string;
+  /** Builds the href for a date chip. Omitted renders the strip as static. */
+  dateHref?: (dateKey: string) => string;
+}
+
 function groupByDate(shows: ShowListItem[]): Map<string, ShowListItem[]> {
   const groups = new Map<string, ShowListItem[]>();
   for (const show of shows) {
@@ -42,40 +48,119 @@ function groupByDate(shows: ShowListItem[]): Map<string, ShowListItem[]> {
   return groups;
 }
 
-export function ShowtimesList({ shows }: { shows: ShowListItem[] }) {
+function groupByVenue(shows: ShowListItem[]): Map<string, ShowListItem[]> {
+  const groups = new Map<string, ShowListItem[]>();
+  for (const show of shows) {
+    const list = groups.get(show.venue_name);
+    if (list) list.push(show);
+    else groups.set(show.venue_name, [show]);
+  }
+  return groups;
+}
+
+/**
+ * Date strip plus venue-grouped showtimes.
+ *
+ * Grouping by venue rather than listing every show flat is what makes a busy
+ * title readable: a film on four screens across five days is 80 showtimes, and
+ * a flat list of those is unusable. The date strip narrows to one day, and the
+ * venue rows then hold a handful of chips each.
+ */
+export function ShowtimesList({
+  shows,
+  city,
+  otherCities = [],
+  selectedDate,
+  dateHref,
+}: ShowtimesListProps) {
   if (shows.length === 0) {
-    return <p className="text-sm text-black/50 dark:text-white/50">No upcoming showtimes.</p>;
+    return (
+      <div className="rounded-lg bg-surface p-8 text-center shadow-sm">
+        <p className="font-medium">No showtimes in {city}</p>
+        {otherCities.length > 0 ? (
+          <p className="mt-2 text-sm text-muted">
+            This one is playing in {otherCities.slice(0, 3).join(", ")}
+            {otherCities.length > 3 ? ` and ${otherCities.length - 3} more` : ""}. Change your city
+            from the header to book it.
+          </p>
+        ) : (
+          <p className="mt-2 text-sm text-muted">Check back soon.</p>
+        )}
+      </div>
+    );
   }
 
-  const groups = groupByDate(shows);
+  const byDate = groupByDate(shows);
+  const dateKeys = [...byDate.keys()].sort();
+  const activeDate = selectedDate && byDate.has(selectedDate) ? selectedDate : dateKeys[0];
+  const dayShows = byDate.get(activeDate) ?? [];
+  const byVenue = groupByVenue(dayShows);
 
   return (
-    <div className="flex flex-col gap-6">
-      {[...groups.values()].map((dayShows) => (
-        <div key={dayShows[0].id}>
-          <h3 className="text-sm font-medium text-black/70 dark:text-white/70">
-            {dateHeadingFormatter.format(new Date(dayShows[0].start_time))}
-          </h3>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {dayShows.map((show) => (
-              <Link
-                key={show.id}
-                href={`/shows/${show.id}`}
-                className="flex flex-col items-start rounded-md border border-black/10 px-3 py-2 text-left transition-colors hover:border-black/30 dark:border-white/15 dark:hover:border-white/40"
-              >
-                <span className="text-sm font-medium">{timeFormatter.format(new Date(show.start_time))}</span>
-                <span className="text-xs text-black/50 dark:text-white/50">
-                  {show.venue_name}
-                  {show.screen_name ? ` · ${show.screen_name}` : ""}
-                </span>
-                <span className="mt-1 text-xs font-medium text-black/70 dark:text-white/70">
-                  {formatCurrency(show.price)}
-                </span>
-              </Link>
-            ))}
+    <div>
+      {/* Date strip */}
+      <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+        {dateKeys.map((key) => {
+          const when = new Date(byDate.get(key)![0].start_time);
+          const active = key === activeDate;
+          const content = (
+            <>
+              <span className="text-[10px] font-medium uppercase tracking-wider">
+                {dayNameFormatter.format(when)}
+              </span>
+              <span className="text-lg font-bold leading-none">{dayNumFormatter.format(when)}</span>
+              <span className="text-[10px] uppercase tracking-wider">
+                {monthFormatter.format(when)}
+              </span>
+            </>
+          );
+          const className = `flex w-14 shrink-0 flex-col items-center gap-0.5 rounded-lg px-2 py-2.5 transition-colors ${
+            active ? "bg-accent text-white" : "bg-surface text-muted hover:bg-white"
+          }`;
+          return dateHref ? (
+            <Link key={key} href={dateHref(key)} className={className} aria-current={active ? "date" : undefined}>
+              {content}
+            </Link>
+          ) : (
+            <div key={key} className={className}>
+              {content}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Venue rows for the active date */}
+      <div className="mt-4 flex flex-col gap-3">
+        {[...byVenue.entries()].map(([venueName, venueShows]) => (
+          <div key={venueName} className="rounded-lg bg-surface p-4 shadow-sm">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h3 className="text-sm font-semibold">{venueName}</h3>
+              <span className="text-xs text-muted">{venueShows[0].venue_city}</span>
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {venueShows.map((show) => (
+                <Link
+                  key={show.id}
+                  href={`/shows/${show.id}`}
+                  className="group flex min-w-22 flex-col items-center rounded-md border border-ok/40 px-3 py-2 text-center transition-colors hover:border-ok hover:bg-ok/5"
+                  title={`${show.screen_name ?? "General admission"} · ${formatCurrency(show.price)}`}
+                >
+                  <span className="text-sm font-semibold text-ok">
+                    {timeFormatter.format(new Date(show.start_time))}
+                  </span>
+                  <span className="mt-0.5 text-[10px] text-muted">
+                    {show.screen_name ?? "General"}
+                  </span>
+                  <span className="text-[10px] font-medium text-muted">
+                    {formatCurrency(show.price)}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
