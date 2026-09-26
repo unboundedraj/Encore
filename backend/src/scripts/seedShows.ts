@@ -65,6 +65,12 @@ const C = {
   carnatic: "65f1a2b3c4d5e6f70200000a",
   courtMartial: "65f1a2b3c4d5e6f70200000b",
   openMic: "65f1a2b3c4d5e6f70200000c",
+  vanaputra: "65f1a2b3c4d5e6f70100000d",
+  purvanchal: "65f1a2b3c4d5e6f70100000e",
+  mahamari: "65f1a2b3c4d5e6f70100000f",
+  samayRaina: "65f1a2b3c4d5e6f70200000d",
+  gauravKapoor: "65f1a2b3c4d5e6f70200000e",
+  abhishekUpmanyu: "65f1a2b3c4d5e6f70200000f",
 } as const;
 
 const VENUES = [
@@ -90,6 +96,8 @@ const VENUES = [
   { id: v("0d"), name: "The Music Academy", address: "168 TTK Road, Royapettah", city: "Chennai" },
   // Pune
   { id: v("0e"), name: "PVR: Pavillion Mall, SB Road", address: "Senapati Bapat Road, Shivajinagar", city: "Pune" },
+  { id: v("11"), name: "INOX: Phoenix Marketcity, Viman Nagar", address: "Nagar Road, Viman Nagar", city: "Pune" },
+  { id: v("12"), name: "Canvas Laugh Club, Pune", address: "North Main Road, Koregaon Park", city: "Pune" },
   // Kolkata
   { id: v("0f"), name: "INOX: Quest Mall, Ballygunge", address: "33 Syed Amir Ali Avenue, Ballygunge", city: "Kolkata" },
   { id: v("10"), name: "Kala Mandir", address: "48 Shakespeare Sarani, Kolkata", city: "Kolkata" },
@@ -127,6 +135,7 @@ const SCREENS: { id: string; venueId: string; name: string; layout: LayoutName }
   { id: s("09"), venueId: v("0c"), name: "Screen 1 - Sathyam", layout: "standard" },
   { id: s("0a"), venueId: v("0e"), name: "Audi 3", layout: "standard" },
   { id: s("0b"), venueId: v("0f"), name: "Screen 2", layout: "standard" },
+  { id: s("0c"), venueId: v("11"), name: "Screen 2", layout: "large" },
 ];
 
 const ROW_LABELS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -203,18 +212,19 @@ const MIN_LEAD_MINUTES = 90;
 
 /** What each screen is playing, and its base ticket price in paise. */
 const PROGRAMME: { screenId: string; basePrice: number; films: string[] }[] = [
-  { screenId: SCREEN_ONE, basePrice: 45000, films: [C.kaalchakra, C.antariksh] },
+  { screenId: SCREEN_ONE, basePrice: 45000, films: [C.kaalchakra, C.antariksh, C.mahamari] },
   { screenId: s("01"), basePrice: 32000, films: [C.chaiBiscuit, C.lastLedger] },
   { screenId: s("02"), basePrice: 28000, films: [C.marineDrive, C.pushpavalli] },
   { screenId: s("03"), basePrice: 60000, films: [C.kaalchakra, C.dhabaDiaries] },
-  { screenId: s("04"), basePrice: 75000, films: [C.antariksh, C.lastLedger] },
+  { screenId: s("04"), basePrice: 75000, films: [C.antariksh, C.lastLedger, C.purvanchal] },
   { screenId: s("05"), basePrice: 42000, films: [C.antariksh, C.bengaluruTraffic] },
   { screenId: s("06"), basePrice: 25000, films: [C.bengaluruTraffic, C.chaiBiscuit] },
   { screenId: s("07"), basePrice: 22000, films: [C.kaalchakra, C.monsoonLetters] },
-  { screenId: s("08"), basePrice: 30000, films: [C.samudram, C.antariksh] },
+  { screenId: s("08"), basePrice: 30000, films: [C.samudram, C.antariksh, C.vanaputra] },
   { screenId: s("09"), basePrice: 24000, films: [C.vetriNagaram, C.samudram] },
-  { screenId: s("0a"), basePrice: 26000, films: [C.chaiBiscuit, C.kaalchakra] },
+  { screenId: s("0a"), basePrice: 26000, films: [C.chaiBiscuit, C.kaalchakra, C.purvanchal] },
   { screenId: s("0b"), basePrice: 23000, films: [C.silkRoute, C.marineDrive] },
+  { screenId: s("0c"), basePrice: 27000, films: [C.vanaputra, C.mahamari] },
 ];
 
 /** Live events: general admission, one or two nights each. */
@@ -232,6 +242,9 @@ const LIVE: { contentId: string; venueId: string; price: number; capacity: numbe
   { contentId: C.courtMartial, venueId: v("06"), price: 64900, capacity: 620, nights: [{ day: 1, hour: 19, minute: 30 }, { day: 3, hour: 19, minute: 30 }] },
   { contentId: C.tughlaq, venueId: v("10"), price: 54900, capacity: 900, nights: [{ day: 5, hour: 18, minute: 30 }] },
   { contentId: C.mumbaiOpen, venueId: v("0b"), price: 129900, capacity: 4000, nights: [{ day: 4, hour: 16, minute: 0 }] },
+  { contentId: C.samayRaina, venueId: v("12"), price: 89900, capacity: 350, nights: [{ day: 2, hour: 20, minute: 0 }, { day: 4, hour: 20, minute: 0 }] },
+  { contentId: C.gauravKapoor, venueId: v("09"), price: 79900, capacity: 260, nights: [{ day: 1, hour: 19, minute: 30 }] },
+  { contentId: C.abhishekUpmanyu, venueId: v("02"), price: 79900, capacity: 220, nights: [{ day: 3, hour: 20, minute: 0 }, { day: 5, hour: 20, minute: 0 }] },
 ];
 
 /**
