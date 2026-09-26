@@ -34,12 +34,23 @@ export class ShowNotAssignedError extends Error {
   }
 }
 
-/** Upcoming shows for one piece of content, newest first by start time. */
-export async function listShowsForContent(contentId: string): Promise<ShowListItem[]> {
+/**
+ * Upcoming shows for one piece of content, newest first by start time.
+ *
+ * `city` filters to venues in that city. It is applied in application code
+ * rather than as a PostgREST filter on the embedded venue, because filtering
+ * on an embedded resource there turns the embed into an inner join whose
+ * semantics differ from the plain read this otherwise is -- and the row count
+ * per title is small enough that the difference is not worth the subtlety.
+ */
+export async function listShowsForContent(
+  contentId: string,
+  city: string | null = null
+): Promise<ShowListItem[]> {
   const { data, error } = await supabase
     .from("encore_shows")
     .select(
-      "id, content_id, content_type, seating_mode, start_time, price, venue_id, screen_id, encore_venues(name), encore_screens(name)"
+      "id, content_id, content_type, seating_mode, start_time, price, venue_id, screen_id, encore_venues(name, city), encore_screens(name)"
     )
     .eq("content_id", contentId)
     .gte("start_time", new Date().toISOString())
@@ -61,22 +72,27 @@ export async function listShowsForContent(contentId: string): Promise<ShowListIt
     price: number;
     venue_id: string;
     screen_id: string | null;
-    encore_venues: { name: string } | null;
+    encore_venues: { name: string; city: string } | null;
     encore_screens: { name: string } | null;
   };
 
-  return ((data ?? []) as unknown as Row[]).map((row) => ({
-    id: row.id,
-    content_id: row.content_id,
-    content_type: row.content_type,
-    seating_mode: row.seating_mode,
-    start_time: row.start_time,
-    price: row.price,
-    venue_id: row.venue_id,
-    venue_name: row.encore_venues?.name ?? "",
-    screen_id: row.screen_id,
-    screen_name: row.encore_screens?.name ?? null,
-  }));
+  const wantedCity = city?.trim().toLowerCase() ?? null;
+
+  return ((data ?? []) as unknown as Row[])
+    .filter((row) => !wantedCity || row.encore_venues?.city?.toLowerCase() === wantedCity)
+    .map((row) => ({
+      id: row.id,
+      content_id: row.content_id,
+      content_type: row.content_type,
+      seating_mode: row.seating_mode,
+      start_time: row.start_time,
+      price: row.price,
+      venue_id: row.venue_id,
+      venue_name: row.encore_venues?.name ?? "",
+      venue_city: row.encore_venues?.city ?? "",
+      screen_id: row.screen_id,
+      screen_name: row.encore_screens?.name ?? null,
+    }));
 }
 
 /**

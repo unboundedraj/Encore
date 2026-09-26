@@ -9,6 +9,7 @@
 import type { Request, Response } from "express";
 import type { ContentType, EventCategory, Paginated } from "shared";
 import { ContentModel } from "../models/Content";
+import { contentIdsInCity } from "../services/cityService";
 
 const CONTENT_TYPES: ContentType[] = ["movie", "event"];
 const EVENT_CATEGORIES: EventCategory[] = [
@@ -51,10 +52,11 @@ function isMongoUnavailable(err: unknown): boolean {
 
 /**
  * GET /api/content
- * ?type=movie|event  ?category=<event category>  ?page=1  ?limit=20
+ * ?type=movie|event  ?category=<event category>  ?city=Mumbai  ?page=1  ?limit=20
  */
 export async function listContent(req: Request, res: Response) {
   const { type, category } = req.query;
+  const city = typeof req.query.city === "string" ? req.query.city.trim() : "";
 
   // Reject unknown filter values rather than returning an empty list. A typo'd
   // ?type=movies otherwise looks like "there are no movies".
@@ -79,6 +81,14 @@ export async function listContent(req: Request, res: Response) {
   if (category) filter.category = category;
 
   try {
+    // City lives on the venue, in Postgres, and the catalog lives in Mongo --
+    // so this resolves to a set of content_ids there and applies it as a
+    // filter here. An unknown city yields an empty set, which correctly
+    // renders as "nothing on" rather than as the unfiltered catalog.
+    if (city) {
+      filter._id = { $in: await contentIdsInCity(city) };
+    }
+
     const [items, total] = await Promise.all([
       ContentModel.find(filter)
         .select("-__v")

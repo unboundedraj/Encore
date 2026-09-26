@@ -33,8 +33,10 @@ export async function listShows(req: Request, res: Response) {
     return res.status(400).json({ error: "contentId must be a 24-character hex string" });
   }
 
+  const city = typeof req.query.city === "string" ? req.query.city.trim() : null;
+
   try {
-    const shows = await listShowsForContent(contentId);
+    const shows = await listShowsForContent(contentId, city || null);
     return res.json({ items: shows });
   } catch (err) {
     console.error("[shows] list failed:", err);
