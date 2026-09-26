@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { env } from "./config/env";
 import { connectMongo } from "./config/mongodb";
+import { connectRedis } from "./config/redis";
 import { errorHandler } from "./middleware/errorHandler";
 import contentRoutes from "./routes/content.routes";
 import healthRoutes from "./routes/health.routes";
@@ -25,6 +26,12 @@ app.use(errorHandler);
 // database is exactly when someone needs to read the health endpoint. The
 // failure is logged and surfaces there as a degraded dependency.
 connectMongo().catch((err: Error) => console.error(err.message));
+
+// Same rationale as Mongo: connect eagerly so the first request does not race
+// the handshake, but do not gate listening on it. An unreachable Redis makes
+// holds return 503 while browsing keeps working, which is strictly better than
+// refusing to start.
+connectRedis().catch((err: Error) => console.error(`[redis] ${err.message}`));
 
 app.listen(env.port, () => {
   console.log(`Server running on port ${env.port}`);
