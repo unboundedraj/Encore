@@ -8,10 +8,18 @@ import contentRoutes from "./routes/content.routes";
 import healthRoutes from "./routes/health.routes";
 import meRoutes from "./routes/me.routes";
 import showRoutes from "./routes/show.routes";
+import webhookRoutes from "./routes/webhook.routes";
 
 const app = express();
 
 app.use(cors());
+
+// Mounted before express.json() on purpose. Stripe signs the exact bytes it
+// sent, and this router needs them intact as a Buffer -- once the JSON parser
+// has consumed the stream, the original bytes cannot be reconstructed
+// reliably and every signature check would fail.
+app.use("/api/webhooks", webhookRoutes);
+
 app.use(express.json());
 
 app.use("/api/health", healthRoutes);
