@@ -145,7 +145,7 @@ export default async function BrowsePage({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+      <div className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6">
         <nav className="flex gap-1 overflow-x-auto border-b border-hairline py-1 no-scrollbar">
           {TABS.map((tab) => {
             const active = tab === activeTab;
