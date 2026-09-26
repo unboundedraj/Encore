@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/components/AuthProvider";
+import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,8 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Encore",
-  description: "Book movies and live events.",
+  title: "Encore — Movie tickets, comedy and live events",
+  description:
+    "Book movie tickets, standup comedy and live events across Mumbai, Delhi NCR, Bengaluru, Hyderabad, Chennai, Kolkata and Pune.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -24,10 +27,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-full flex-col">
         {/* AuthProvider is a client component; this layout stays a server
-            component, so only the auth subtree ships the Firebase SDK. */}
-        <AuthProvider>{children}</AuthProvider>
+            component, so only the auth subtree ships the Firebase SDK. The
+            header is rendered inside it because its account chip reads auth
+            state, but the header itself is still a server component. */}
+        <AuthProvider>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">{children}</div>
+          <SiteFooter />
+        </AuthProvider>
       </body>
     </html>
   );
