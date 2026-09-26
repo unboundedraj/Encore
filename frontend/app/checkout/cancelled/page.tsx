@@ -13,13 +13,13 @@ async function CancelledContent({
   return (
     <div className="text-center">
       <h1 className="text-2xl font-semibold tracking-tight">Checkout cancelled</h1>
-      <p className="mt-2 text-sm text-black/55 dark:text-white/55">
+      <p className="mt-2 text-sm text-muted">
         No payment was taken. If you had seats selected, the hold releases on its own within a few
         minutes -- so someone else may take them if you wait too long to come back.
       </p>
       <Link
         href={showId ? `/shows/${showId}` : "/browse"}
-        className="mt-6 inline-block rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:opacity-90"
+        className="mt-6 inline-block rounded-md bg-accent px-6 py-3 text-sm font-semibold text-white hover:bg-accent-dark"
       >
         {showId ? "Back to seat selection" : "Back to browse"}
       </Link>

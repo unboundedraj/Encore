@@ -104,7 +104,7 @@ function useBookingOutcome(bookingId: string | null): Outcome {
 function SummaryRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex justify-between gap-4 py-2 text-sm">
-      <span className="text-black/50 dark:text-white/50">{label}</span>
+      <span className="text-muted">{label}</span>
       <span className="text-right font-medium">{value}</span>
     </div>
   );
@@ -112,7 +112,7 @@ function SummaryRow({ label, value }: { label: string; value: React.ReactNode })
 
 function BookingSummary({ booking, content }: { booking: BookingDetail; content: Content | null }) {
   return (
-    <div className="mt-6 rounded-lg border border-black/10 p-5 text-left dark:border-white/15">
+    <div className="mt-6 rounded-lg bg-surface p-5 text-left shadow-sm">
       {content ? <p className="font-medium">{content.title}</p> : null}
       <SummaryRow
         label="When"
@@ -142,7 +142,7 @@ function SuccessContent() {
   const outcome = useBookingOutcome(user ? bookingId : null);
 
   if (authLoading) {
-    return <p className="text-sm text-black/50 dark:text-white/50">Loading…</p>;
+    return <p className="text-sm text-muted">Loading…</p>;
   }
 
   if (!user) {
@@ -153,12 +153,12 @@ function SuccessContent() {
     return (
       <div className="text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Sign in to view your confirmation</h1>
-        <p className="mt-2 text-sm text-black/55 dark:text-white/55">
+        <p className="mt-2 text-sm text-muted">
           Your payment went through. Sign back in with the same account to see it.
         </p>
         <Link
           href={`/login?next=${encodeURIComponent(returnTo)}`}
-          className="mt-6 inline-block rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:opacity-90"
+          className="mt-6 inline-block rounded-md bg-accent px-6 py-3 text-sm font-semibold text-white hover:bg-accent-dark"
         >
           Sign in
         </Link>
@@ -171,7 +171,7 @@ function SuccessContent() {
       return (
         <div className="text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Confirming your booking…</h1>
-          <p className="mt-2 text-sm text-black/55 dark:text-white/55">
+          <p className="mt-2 text-sm text-muted">
             Payment received. This usually takes a couple of seconds.
           </p>
         </div>
@@ -180,10 +180,10 @@ function SuccessContent() {
     case "confirmed":
       return (
         <div className="text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-green-600 dark:text-green-400">
+          <h1 className="text-2xl font-semibold tracking-tight text-ok">
             You&rsquo;re booked!
           </h1>
-          <p className="mt-2 text-sm text-black/55 dark:text-white/55">
+          <p className="mt-2 text-sm text-muted">
             A confirmation is on your account. Enjoy the show.
           </p>
           <BookingSummary booking={outcome.booking} content={outcome.content} />
@@ -200,14 +200,14 @@ function SuccessContent() {
       return (
         <div className="text-center">
           <h1 className="text-2xl font-semibold tracking-tight">We couldn&rsquo;t hold your seats</h1>
-          <p className="mt-2 text-sm text-black/55 dark:text-white/55">
+          <p className="mt-2 text-sm text-muted">
             Someone else completed their booking for the same seats moments before yours. Your payment
             of {formatCurrency(outcome.booking.total_amount)} is being refunded and should appear on your
             statement shortly.
           </p>
           <Link
             href={`/shows/${outcome.booking.show_id}`}
-            className="mt-6 inline-block rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:opacity-90"
+            className="mt-6 inline-block rounded-md bg-accent px-6 py-3 text-sm font-semibold text-white hover:bg-accent-dark"
           >
             Choose different seats
           </Link>
@@ -218,7 +218,7 @@ function SuccessContent() {
       return (
         <div className="text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Almost there</h1>
-          <p className="mt-2 text-sm text-black/55 dark:text-white/55">
+          <p className="mt-2 text-sm text-muted">
             Your payment was received and we&rsquo;re still finalising the booking. This can occasionally
             take a minute -- refreshing this page will pick it up as soon as it&rsquo;s ready.
           </p>
@@ -229,7 +229,7 @@ function SuccessContent() {
       return (
         <div className="text-center">
           <h1 className="text-2xl font-semibold tracking-tight">We couldn&rsquo;t find that booking</h1>
-          <p className="mt-2 text-sm text-black/55 dark:text-white/55">
+          <p className="mt-2 text-sm text-muted">
             The link looks incomplete or belongs to a different account.
           </p>
         </div>
@@ -239,7 +239,7 @@ function SuccessContent() {
       return (
         <div className="text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Something went wrong</h1>
-          <p className="mt-2 text-sm text-black/55 dark:text-white/55">{outcome.message}</p>
+          <p className="mt-2 text-sm text-muted">{outcome.message}</p>
         </div>
       );
   }

@@ -25,8 +25,8 @@ interface MeResponse {
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-0.5 border-b border-black/5 py-2.5 last:border-b-0 dark:border-white/10 sm:flex-row sm:gap-4">
-      <span className="w-48 shrink-0 text-sm text-black/50 dark:text-white/50">{label}</span>
+    <div className="flex flex-col gap-0.5 border-b border-hairline py-2.5 last:border-b-0 sm:flex-row sm:gap-4">
+      <span className="w-48 shrink-0 text-sm text-muted">{label}</span>
       <span className="font-mono text-sm break-all">{value}</span>
     </div>
   );
@@ -84,7 +84,7 @@ function ProfileContent() {
       </div>
 
       <section className="mt-8">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-black/40 dark:text-white/40">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
           Firebase client session
         </h2>
         <div className="mt-2">
@@ -97,7 +97,7 @@ function ProfileContent() {
 
       <section className="mt-10">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-black/40 dark:text-white/40">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
             GET /api/me &mdash; verified by the backend
           </h2>
           <button
@@ -114,7 +114,7 @@ function ProfileContent() {
         </div>
 
         {error ? (
-          <p role="alert" className="mt-3 rounded-md bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="mt-3 rounded-md bg-accent/10 px-3 py-2 text-sm text-accent-dark">
             {error}
           </p>
         ) : null}
