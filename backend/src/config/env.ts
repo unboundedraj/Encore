@@ -16,6 +16,8 @@ export const env = {
   firebaseClientEmail: process.env.FIREBASE_CLIENT_EMAIL,
   firebasePrivateKey: process.env.FIREBASE_PRIVATE_KEY,
   redisUrl: process.env.REDIS_URL,
+  /** Direct Postgres connection, for the transactional paths PostgREST cannot express. */
+  supabaseDbUrl: process.env.SUPABASE_DB_URL ?? process.env.DATABASE_URL,
   // Must match the pinned frontend dev port (frontend/package.json), not
   // Next's default 3000 -- this drives Stripe's success/cancel redirect.
   frontendUrl: process.env.FRONTEND_URL ?? "http://localhost:3002",
