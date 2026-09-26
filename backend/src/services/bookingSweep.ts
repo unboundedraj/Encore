@@ -16,6 +16,19 @@ import { expireStaleBookings } from "./bookingService";
 
 const SWEEP_INTERVAL_MS = 10 * 60_000;
 
+/**
+ * Safe to run on multiple instances at the same time, on this plain a
+ * schedule, for three reasons that all have to hold together:
+ *   1. The partial unique index that prevents double-booking only covers
+ *      `status = 'confirmed'` rows, so a pending row this sweep touches was
+ *      never part of that guarantee in the first place.
+ *   2. Its Redis hold has already expired well before the 60-minute cutoff
+ *      (holds last 7 minutes), so the seats are already free regardless of
+ *      what this job does.
+ *   3. The UPDATE itself is idempotent -- `WHERE status = 'pending'` means a
+ *      second instance racing the same row just updates zero rows instead of
+ *      erroring, so there is nothing to lock or coordinate.
+ */
 export function startBookingSweep(intervalMs = SWEEP_INTERVAL_MS): NodeJS.Timeout {
   const run = () => {
     expireStaleBookings()
