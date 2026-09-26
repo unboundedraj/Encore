@@ -9,6 +9,7 @@ import healthRoutes from "./routes/health.routes";
 import meRoutes from "./routes/me.routes";
 import showRoutes from "./routes/show.routes";
 import webhookRoutes from "./routes/webhook.routes";
+import { startBookingSweep } from "./services/bookingSweep";
 
 const app = express();
 
@@ -41,6 +42,16 @@ connectMongo().catch((err: Error) => console.error(err.message));
 // refusing to start.
 connectRedis().catch((err: Error) => console.error(`[redis] ${err.message}`));
 
-app.listen(env.port, () => {
+const sweep = startBookingSweep();
+
+const server = app.listen(env.port, () => {
   console.log(`Server running on port ${env.port}`);
 });
+
+// Stop the interval on shutdown so the process can actually exit.
+for (const signal of ["SIGINT", "SIGTERM"] as const) {
+  process.once(signal, () => {
+    clearInterval(sweep);
+    server.close(() => process.exit(0));
+  });
+}
