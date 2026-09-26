@@ -99,6 +99,22 @@ application. The MongoDB side is unaffected.
 - MongoDB catalog model: `backend/src/models/Content.ts`
 - Shared types mirroring both: `shared/src/types/`
 
+## Production checklist
+
+This project has run entirely against Stripe test mode, with the CLI's
+`stripe listen` forwarding events to a local backend. Before pointing it at a
+real Stripe account:
+
+- **Register a real webhook endpoint** in the Stripe Dashboard (Developers →
+  Webhooks) pointing at the deployed backend's `/api/webhooks/stripe`, and use
+  *that* endpoint's signing secret for `STRIPE_WEBHOOK_SECRET`. The `whsec_...`
+  value `stripe listen` prints locally is unique to that CLI session and does
+  not work once you're no longer forwarding through it.
+- **Revisit the pinned Stripe API version** (`apiVersion` in
+  `backend/src/config/stripe.ts`, currently `2026-08-26.dahlia`) if the Stripe
+  CLI or SDK gets upgraded later — it has to stay in sync with whatever version
+  the installed `stripe` package actually expects.
+
 ## Status / TBD
 
 - [x] Design the Supabase schema (users, venues, screens, seats, shows, bookings, payments)
