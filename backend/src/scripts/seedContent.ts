@@ -1,17 +1,23 @@
 /**
- * Seeds the MongoDB catalog with realistic movies and events.
+ * Seeds the MongoDB catalog with a realistic Indian listing: films across five
+ * languages, standup, live music, theatre and sport.
  *
  * Ids are fixed rather than generated, which makes the script idempotent (a
  * re-run replaces exactly what it wrote before, never duplicating) and keeps
  * /content/<id> URLs stable across re-seeds so links in notes and tests do not
- * rot.
+ * rot. The first ten ids are the ones the original placeholder catalog used --
+ * they are deliberately reused rather than retired, so any /content/<id> or
+ * /shows/<id> link saved before this reseed still resolves.
  *
  * Documents are created through the discriminator models rather than inserted
  * raw, so every one of them passes the same validation a real write would --
  * which makes this a check on the schema as well as a fixture loader.
  *
  * Posters are picsum.photos placeholders seeded by slug, so each title gets a
- * stable, distinct image without anyone sourcing real artwork.
+ * stable, distinct image without anyone sourcing real artwork. Titles and
+ * performers are recognisably Indian so the catalog reads like a real listing
+ * rather than lorem ipsum; nothing here corresponds to an actual scheduled
+ * event.
  *
  * Run with: npm run seed:content -w backend
  */
@@ -35,80 +41,158 @@ const MOVIES: Seed<MovieDoc>[] = [
   {
     _id: "65f1a2b3c4d5e6f701000001",
     type: "movie",
-    title: "The Silent Orbit",
+    title: "Kaalchakra",
     description:
-      "A salvage crew wakes from cryosleep to find their ship three years off course and one crew member unaccounted for.",
-    posterUrl: poster("silent-orbit"),
+      "A Mumbai homicide detective investigating a series of staged suicides realises every victim shared a train compartment on the night of the 2006 floods.",
+    posterUrl: poster("kaalchakra"),
     trailerUrl: TRAILER,
-    genres: ["Sci-Fi", "Thriller"],
-    durationMinutes: 137,
-    cast: ["Priya Raghunathan", "Tomas Beck", "Ana Oyelaran"],
-    language: "en",
+    genres: ["Thriller", "Crime", "Mystery"],
+    durationMinutes: 148,
+    cast: ["Rajkummar Rao", "Konkona Sen Sharma", "Jaideep Ahlawat"],
+    language: "hi",
   },
   {
     _id: "65f1a2b3c4d5e6f701000002",
     type: "movie",
     title: "Monsoon Letters",
     description:
-      "Two estranged sisters reopen their grandmother's bookshop in Kochi and find sixty years of unsent correspondence.",
+      "Two estranged sisters reopen their grandmother's bookshop in Fort Kochi and find sixty years of unsent correspondence stacked behind the Malayalam poetry shelf.",
     posterUrl: poster("monsoon-letters"),
     trailerUrl: null,
     genres: ["Drama", "Family"],
     durationMinutes: 118,
-    cast: ["Meera Nandakumar", "Lakshmi Iyer", "Rahul Menon"],
+    cast: ["Parvathy Thiruvothu", "Nimisha Sajayan", "Fahadh Faasil"],
     language: "ml",
   },
   {
     _id: "65f1a2b3c4d5e6f701000003",
     type: "movie",
-    title: "Hollow Pines",
+    title: "Vetri Nagaram",
     description:
-      "A wildfire lookout in her first season starts receiving radio calls from a tower that burned down a decade ago.",
-    posterUrl: poster("hollow-pines"),
+      "A Madurai auto driver wins a district kabaddi trial and discovers the selection was fixed against the one player who could beat him.",
+    posterUrl: poster("vetri-nagaram"),
     trailerUrl: TRAILER,
-    genres: ["Horror", "Mystery"],
-    durationMinutes: 101,
-    cast: ["Dana Whitfield", "Marcus Adeyemi"],
-    language: "en",
+    genres: ["Sports", "Drama", "Action"],
+    durationMinutes: 156,
+    cast: ["Dhanush", "Aishwarya Rajesh", "Soori"],
+    language: "ta",
   },
   {
     _id: "65f1a2b3c4d5e6f701000004",
     type: "movie",
-    title: "Paper Tigers",
+    title: "Chai, Biscuit, Revolution",
     description:
-      "Four retired stuntmen are hired for one last job and discover the film they signed onto does not exist.",
-    posterUrl: poster("paper-tigers"),
-    trailerUrl: null,
-    genres: ["Action", "Comedy"],
-    durationMinutes: 124,
-    cast: ["Vikram Sethi", "Joon-ho Park", "Elena Brandt", "Samuel Achebe"],
+      "Four friends running a failing tea stall outside a Lucknow coaching centre accidentally become the face of a student movement.",
+    posterUrl: poster("chai-biscuit"),
+    trailerUrl: TRAILER,
+    genres: ["Comedy", "Drama"],
+    durationMinutes: 132,
+    cast: ["Vijay Varma", "Sanya Malhotra", "Pankaj Tripathi"],
     language: "hi",
   },
   {
     _id: "65f1a2b3c4d5e6f701000005",
     type: "movie",
-    title: "The Cartographer's Daughter",
+    title: "Samudram",
     description:
-      "In 1890s Lisbon, a mapmaker's apprentice realises her father has been deliberately drawing one island wrong.",
-    posterUrl: poster("cartographers-daughter"),
+      "A Visakhapatnam trawler captain takes a contract he cannot refuse and finds his crew a hundred nautical miles from anyone who can help.",
+    posterUrl: poster("samudram"),
     trailerUrl: TRAILER,
-    genres: ["Historical", "Adventure"],
-    durationMinutes: 146,
-    cast: ["Ines Carvalho", "Pedro Almeida", "Sofia Ruiz"],
-    language: "pt",
+    genres: ["Action", "Thriller"],
+    durationMinutes: 164,
+    cast: ["Rana Daggubati", "Sai Pallavi", "Jagapathi Babu"],
+    language: "te",
   },
   {
     _id: "65f1a2b3c4d5e6f701000006",
     type: "movie",
-    title: "Nightshift at the Aquarium",
+    title: "Night Shift at Marine Drive",
     description:
-      "A lonely security guard befriends an octopus that has started leaving him messages in the gravel.",
-    posterUrl: poster("nightshift-aquarium"),
-    trailerUrl: null,
+      "An ambulance driver working the graveyard shift keeps picking up the same passenger from the same stretch of sea wall.",
+    posterUrl: poster("marine-drive"),
+    trailerUrl: TRAILER,
+    genres: ["Horror", "Mystery"],
+    durationMinutes: 109,
+    cast: ["Radhika Apte", "Adarsh Gourav"],
+    language: "hi",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f701000007",
+    type: "movie",
+    title: "Bengaluru Traffic",
+    description:
+      "Six strangers stuck on the Outer Ring Road for nine hours discover they are all on their way to the same funeral.",
+    posterUrl: poster("bengaluru-traffic"),
+    trailerUrl: TRAILER,
     genres: ["Comedy", "Drama"],
-    durationMinutes: 96,
-    cast: ["Gabriel Okonkwo", "Yuki Tanaka"],
-    language: "en",
+    durationMinutes: 127,
+    cast: ["Rakshit Shetty", "Rashmika Mandanna", "Achyuth Kumar"],
+    language: "kn",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f701000008",
+    type: "movie",
+    title: "The Last Ledger",
+    description:
+      "A forensic accountant auditing a cooperative bank in Nashik finds a second set of books written in her late father's hand.",
+    posterUrl: poster("last-ledger"),
+    trailerUrl: null,
+    genres: ["Drama", "Thriller"],
+    durationMinutes: 141,
+    cast: ["Tabu", "Manoj Bajpayee", "Shefali Shah"],
+    language: "hi",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f701000009",
+    type: "movie",
+    title: "Pushpavalli Returns",
+    description:
+      "A wedding planner with a perfect record takes on the one ceremony she swore she would never touch: her own.",
+    posterUrl: poster("pushpavalli-returns"),
+    trailerUrl: TRAILER,
+    genres: ["Romance", "Comedy"],
+    durationMinutes: 124,
+    cast: ["Sanya Malhotra", "Abhishek Banerjee", "Sheeba Chaddha"],
+    language: "hi",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70100000a",
+    type: "movie",
+    title: "Silk Route",
+    description:
+      "A Kolkata textile heir traces a shipment of counterfeit sarees back through four countries and one family secret.",
+    posterUrl: poster("silk-route"),
+    trailerUrl: TRAILER,
+    genres: ["Drama", "Mystery"],
+    durationMinutes: 152,
+    cast: ["Jisshu Sengupta", "Swastika Mukherjee", "Ritwick Chakraborty"],
+    language: "bn",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70100000b",
+    type: "movie",
+    title: "Antariksh",
+    description:
+      "India's first crewed lunar mission loses contact forty seconds before descent, and a retired engineer in Thiruvananthapuram is the only one who knows why.",
+    posterUrl: poster("antariksh"),
+    trailerUrl: TRAILER,
+    genres: ["Sci-Fi", "Drama"],
+    durationMinutes: 159,
+    cast: ["R. Madhavan", "Vidya Balan", "Mohanlal"],
+    language: "hi",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70100000c",
+    type: "movie",
+    title: "Dhaba Diaries",
+    description:
+      "A Michelin-trained chef inherits her grandfather's highway dhaba on NH-44 and cannot bring herself to change a single recipe.",
+    posterUrl: poster("dhaba-diaries"),
+    trailerUrl: null,
+    genres: ["Drama", "Family"],
+    durationMinutes: 113,
+    cast: ["Bhumi Pednekar", "Kumud Mishra"],
+    language: "hi",
   },
 ];
 
@@ -116,37 +200,37 @@ const EVENTS: Seed<EventDoc>[] = [
   {
     _id: "65f1a2b3c4d5e6f702000001",
     type: "event",
-    title: "Aurora Collective: Wavelengths Tour",
+    title: "Indian Ocean: Unplugged",
     description:
-      "The Icelandic post-rock quartet bring their six-piece string arrangement to India for the first time.",
-    posterUrl: poster("aurora-collective"),
+      "Four decades of Kandisa and Bandeh, stripped back to acoustic arrangements for a single seated evening.",
+    posterUrl: poster("indian-ocean-unplugged"),
     trailerUrl: TRAILER,
-    genres: ["Post-Rock", "Live"],
-    performer: "Aurora Collective",
+    genres: ["Fusion", "Rock"],
+    performer: "Indian Ocean",
     category: "concert",
   },
   {
     _id: "65f1a2b3c4d5e6f702000002",
     type: "event",
-    title: "A Doll's House, Part 2",
+    title: "Tughlaq",
     description:
-      "Lucas Hnath's sharp sequel to Ibsen, staged in the round with a rotating cast of four.",
-    posterUrl: poster("dolls-house-two"),
+      "Girish Karnad's study of an idealist king unravelling into tyranny, staged in the round with a cast of fourteen.",
+    posterUrl: poster("tughlaq"),
     trailerUrl: null,
-    genres: ["Theatre", "Drama"],
+    genres: ["Drama", "Classic"],
     performer: "Prithvi Repertory",
     category: "play",
   },
   {
     _id: "65f1a2b3c4d5e6f702000003",
     type: "event",
-    title: "Kabir Rao: Load Bearing",
+    title: "Haq Se Single",
     description:
-      "Ninety minutes of new material about middle management, elderly parents and the cost of being the reliable one.",
-    posterUrl: poster("kabir-rao-load-bearing"),
+      "An hour on family pressure, Indore winters and the specific dread of a wedding invitation with your name spelled wrong.",
+    posterUrl: poster("haq-se-single"),
     trailerUrl: TRAILER,
-    genres: ["Stand-up", "Comedy"],
-    performer: "Kabir Rao",
+    genres: ["Standup", "Hindi"],
+    performer: "Zakir Khan",
     category: "standup",
   },
   {
@@ -154,63 +238,139 @@ const EVENTS: Seed<EventDoc>[] = [
     type: "event",
     title: "Mumbai Open: Finals Weekend",
     description:
-      "Men's and women's singles finals, with the doubles decider opening Sunday's play.",
-    posterUrl: poster("mumbai-open-finals"),
+      "Singles and doubles finals across two show courts, with the trophy presentation following the last match.",
+    posterUrl: poster("mumbai-open"),
     trailerUrl: null,
-    genres: ["Tennis", "Sport"],
-    performer: "Mumbai Open",
+    genres: ["Tennis"],
+    performer: "Maharashtra Tennis Association",
     category: "sports",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000005",
+    type: "event",
+    title: "Bas Kar Bassi",
+    description:
+      "Stories about schoolteachers, first bikes and the exact moment your mother finds your report card.",
+    posterUrl: poster("bas-kar-bassi"),
+    trailerUrl: TRAILER,
+    genres: ["Standup", "Hindi"],
+    performer: "Anubhav Singh Bassi",
+    category: "standup",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000006",
+    type: "event",
+    title: "The Most Interesting Person in the Room",
+    description:
+      "Observational comedy on middle-class Bangalore, music school dropouts and being aggressively average.",
+    posterUrl: poster("most-interesting-person"),
+    trailerUrl: TRAILER,
+    genres: ["Standup", "English"],
+    performer: "Kenny Sebastian",
+    category: "standup",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000007",
+    type: "event",
+    title: "Gully Gang Live",
+    description:
+      "A full-band hip-hop set running through Mere Gully Mein and the Kohinoor-era material, with guest verses.",
+    posterUrl: poster("gully-gang-live"),
+    trailerUrl: TRAILER,
+    genres: ["Hip-Hop", "Rap"],
+    performer: "DIVINE",
+    category: "concert",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000008",
+    type: "event",
+    title: "Prateek Kuhad: Silhouettes Tour",
+    description:
+      "An evening of cold/mess, kasoor and new material, performed with a four-piece and no opening act.",
+    posterUrl: poster("prateek-kuhad-silhouettes"),
+    trailerUrl: TRAILER,
+    genres: ["Indie", "Acoustic"],
+    performer: "Prateek Kuhad",
+    category: "concert",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000009",
+    type: "event",
+    title: "Keep It Real",
+    description:
+      "Crowd work and long-form storytelling from the Aisa Waisa Pyaar tour, with a new closing set.",
+    posterUrl: poster("keep-it-real"),
+    trailerUrl: null,
+    genres: ["Standup", "Hindi"],
+    performer: "Rahul Subramanian",
+    category: "standup",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70200000a",
+    type: "event",
+    title: "Carnatic 2.0",
+    description:
+      "A classical ensemble reworking Thyagaraja kritis with double bass, drum kit and live electronics.",
+    posterUrl: poster("carnatic-2-0"),
+    trailerUrl: TRAILER,
+    genres: ["Classical", "Fusion"],
+    performer: "Sanjay Subrahmanyan Collective",
+    category: "concert",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70200000b",
+    type: "event",
+    title: "Court Martial",
+    description:
+      "Swadesh Deepak's courtroom drama on caste inside the Indian army, performed without an interval.",
+    posterUrl: poster("court-martial"),
+    trailerUrl: null,
+    genres: ["Drama", "Political"],
+    performer: "Aadyam Theatre",
+    category: "play",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f70200000c",
+    type: "event",
+    title: "Open Mic Night",
+    description:
+      "Twelve five-minute sets from the city's newest comics, hosted and unfiltered. New line-up every week.",
+    posterUrl: poster("open-mic-night"),
+    trailerUrl: null,
+    genres: ["Standup", "Open Mic"],
+    performer: "Habitat Regulars",
+    category: "standup",
   },
 ];
 
 async function main() {
   await connectMongo();
 
-  const seededIds = [...MOVIES, ...EVENTS].map((d) => d._id);
+  const movieIds = MOVIES.map((m) => m._id);
+  const eventIds = EVENTS.map((e) => e._id);
 
-  try {
-    // Mongoose creates missing indexes on connect but never alters one that
-    // already exists under the same name. syncIndexes() is not enough here
-    // either: it compares index *keys*, and a text index's keys are the
-    // internal _fts/_ftsx pair regardless of options, so a changed
-    // language_override looks identical to it and the stale index survives.
-    // Check the option directly and drop it when it drifts.
-    const existing = await ContentModel.collection.indexes();
-    const search = existing.find((i) => i.name === "content_search_idx");
-    if (search && search.language_override !== "_searchLanguage") {
-      await ContentModel.collection.dropIndex("content_search_idx");
-      console.log(
-        `dropped stale text index (language_override was '${search.language_override}')`
-      );
-    }
-    const dropped = await ContentModel.syncIndexes();
-    console.log(`synced indexes${dropped.length ? ` (dropped: ${dropped.join(", ")})` : ""}`);
+  // Replace rather than upsert: a changed discriminator (movie -> event) on a
+  // reused id cannot be applied by an update, and deleting first also clears
+  // fields removed from a seed entry rather than leaving them behind.
+  const removed = await ContentModel.deleteMany({ _id: { $in: [...movieIds, ...eventIds] } });
+  console.log(`removed ${removed.deletedCount} previously seeded document(s)`);
 
-    // Scoped to the ids this script owns, so anything added by hand survives.
-    const removed = await ContentModel.deleteMany({ _id: { $in: seededIds } });
-    console.log(`removed ${removed.deletedCount} previously seeded document(s)`);
+  await MovieModel.insertMany(MOVIES);
+  console.log(`inserted ${MOVIES.length} movies`);
 
-    for (const movie of MOVIES) await MovieModel.create(movie);
-    console.log(`inserted ${MOVIES.length} movies`);
+  await EventModel.insertMany(EVENTS);
+  console.log(`inserted ${EVENTS.length} events`);
 
-    for (const event of EVENTS) await EventModel.create(event);
-    console.log(`inserted ${EVENTS.length} events`);
+  const total = await ContentModel.countDocuments();
+  console.log(`\ncatalog now holds ${total} document(s)`);
+  console.log(`sample: /content/${MOVIES[0]._id}`);
 
-    const total = await ContentModel.estimatedDocumentCount();
-    const movieCount = await ContentModel.countDocuments({ type: "movie" });
-    const eventCount = await ContentModel.countDocuments({ type: "event" });
-    console.log(
-      `\ncatalog now holds ${total} document(s): ${movieCount} movies, ${eventCount} events`
-    );
-    console.log(`sample detail URL: /content/${MOVIES[0]._id}`);
-  } finally {
-    await disconnectMongo();
-  }
+  await disconnectMongo();
 }
 
 main()
   .then(() => process.exit(0))
-  .catch((err) => {
+  .catch((err: Error) => {
     console.error(`seed failed: ${err.message}`);
     process.exit(1);
   });
