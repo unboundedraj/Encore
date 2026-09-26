@@ -66,9 +66,13 @@ export default async function ShowDetailPage({ params }: { params: Params }) {
 
       <div className="mt-8">
         {show.seating_mode === "assigned" ? (
-          <SeatMap seats={seats ?? []} pricePerSeat={show.price} />
+          <SeatMap seats={seats ?? []} pricePerSeat={show.price} showId={show.id} />
         ) : (
-          <QuantityPicker availableCapacity={show.available_capacity} pricePerTicket={show.price} />
+          <QuantityPicker
+            availableCapacity={show.available_capacity}
+            pricePerTicket={show.price}
+            showId={show.id}
+          />
         )}
       </div>
     </main>
