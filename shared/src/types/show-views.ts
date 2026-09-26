@@ -43,16 +43,24 @@ export interface AssignedShowDetail extends ShowDetailBase {
 /**
  * GET /api/shows/:showId for a general-admission show.
  *
- * available_capacity is computed server-side as
- * total_capacity - SUM(quantity) over confirmed bookings, and is the number
- * the frontend should treat as authoritative -- never derive it again from
- * total_capacity and booked_quantity independently, since that recomputation
- * is exactly what this field exists to avoid duplicating.
+ * available_capacity is the authoritative number to display, computed
+ * server-side as total_capacity - confirmed - held_by_others. Do not
+ * recompute it from the parts: reproducing that arithmetic in the UI is
+ * exactly what this field exists to prevent, and the parts are only exposed
+ * so a screen can explain *why* a number is low.
+ *
+ * held_by_you is excluded from that subtraction -- tickets you are already
+ * holding are still yours to buy, so showing them as unavailable to yourself
+ * would be wrong.
  */
 export interface GeneralAdmissionShowDetail extends ShowDetailBase {
   seating_mode: "general";
   total_capacity: number;
   booked_quantity: number;
+  /** Temporarily held by other users; frees up on its own if they don't buy. */
+  held_by_others: number;
+  /** This user's own live hold, if any. Zero for anonymous callers. */
+  held_by_you: number;
   available_capacity: number;
 }
 
@@ -60,12 +68,55 @@ export interface GeneralAdmissionShowDetail extends ShowDetailBase {
 export type ShowDetail = AssignedShowDetail | GeneralAdmissionShowDetail;
 
 /**
- * One row of GET /api/shows/:showId/seats.
+ * Seat availability, derived rather than stored -- see the note on Seat.
  *
- * status is derived, not stored -- see the note on Seat. "locked" is not a
- * possible value yet: that is the Redis hold from the next step. Today a seat
- * is only ever available or booked.
+ * `booked` is permanent and comes from Postgres. The two `held_*` states are
+ * temporary Redis holds that expire on their own, and are kept distinct from
+ * `booked` so the UI can say "someone is checking out" rather than "gone",
+ * and can show a returning user which seats are already theirs.
  */
+export type SeatStatus = "available" | "held_by_you" | "held_by_other" | "booked";
+
+/** One row of GET /api/shows/:showId/seats. */
 export interface SeatWithStatus extends Seat {
-  status: "available" | "booked";
+  status: SeatStatus;
+}
+
+/** Successful POST /api/shows/:showId/hold. */
+export interface SeatHoldSuccess {
+  seating_mode: "assigned";
+  seat_ids: string[];
+  expires_at: string;
+  ttl_seconds: number;
+}
+
+export interface GeneralHoldSuccess {
+  seating_mode: "general";
+  quantity: number;
+  expires_at: string;
+  ttl_seconds: number;
+}
+
+export type HoldSuccess = SeatHoldSuccess | GeneralHoldSuccess;
+
+/** Identifies a contested seat well enough to name it in the UI. */
+export interface SeatConflict {
+  seat_id: string;
+  row_label: string;
+  seat_number: number;
+}
+
+/** 409 body when another user already holds one of the requested seats. */
+export interface SeatHoldConflict {
+  error: string;
+  seating_mode: "assigned";
+  conflicts: SeatConflict[];
+}
+
+/** 409 body when the requested quantity no longer fits. */
+export interface GeneralHoldConflict {
+  error: string;
+  seating_mode: "general";
+  requested: number;
+  available: number;
 }
