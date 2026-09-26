@@ -5,6 +5,7 @@ import { connectMongo } from "./config/mongodb";
 import { connectRedis } from "./config/redis";
 import { errorHandler } from "./middleware/errorHandler";
 import bookingRoutes from "./routes/booking.routes";
+import cityRoutes from "./routes/city.routes";
 import contentRoutes from "./routes/content.routes";
 import healthRoutes from "./routes/health.routes";
 import meRoutes from "./routes/me.routes";
@@ -26,6 +27,7 @@ app.use(express.json());
 
 app.use("/api/health", healthRoutes);
 app.use("/api/content", contentRoutes);
+app.use("/api/cities", cityRoutes);
 app.use("/api/shows", showRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/me", meRoutes);

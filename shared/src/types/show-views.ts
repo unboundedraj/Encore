@@ -20,8 +20,24 @@ export interface ShowListItem {
   price: number;
   venue_id: string;
   venue_name: string;
+  /** Lets the showtimes list group by venue and label the city without a second lookup. */
+  venue_city: string;
   screen_id: string | null;
   screen_name: string | null;
+}
+
+/**
+ * One row of GET /api/cities.
+ *
+ * Only cities with at least one upcoming show are listed -- offering a city
+ * that resolves to an empty catalog is worse than not offering it, since the
+ * user cannot tell "nothing on here" from "we got that wrong".
+ */
+export interface CitySummary {
+  city: string;
+  /** Upcoming shows across every venue in this city. */
+  show_count: number;
+  venue_count: number;
 }
 
 interface ShowDetailBase {
