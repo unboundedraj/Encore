@@ -13,6 +13,9 @@
     "verify:live": "ts-node --transpile-only src/tests/liveSchema.ts",
     "verify:mongo": "ts-node --transpile-only src/tests/liveMongo.ts",
     "test:unit": "ts-node --transpile-only src/tests/auth.test.ts",
+    "test:locks": "ts-node --transpile-only src/tests/lockRace.ts",
+    "test:checkout": "ts-node --transpile-only src/tests/checkoutWebhook.ts",
+    "test:checkout:live": "ts-node --transpile-only src/tests/checkoutLive.ts",
     "seed:content": "ts-node --transpile-only src/scripts/seedContent.ts",
     "seed:shows": "ts-node --transpile-only src/scripts/seedShows.ts"
   },
@@ -22,15 +25,17 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
     "firebase-admin": "^14.5.0",
+    "ioredis": "^6.0.0",
     "mongoose": "^9.10.1",
-    "shared": "*"
+    "pg": "^8.23.0",
+    "shared": "*",
+    "stripe": "^22.6.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.10",
     "@types/pg": "^8.23.1",
-    "pg": "^8.23.0",
     "supabase": "^2.117.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.4"

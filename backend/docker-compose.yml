@@ -1,0 +1,32 @@
+# Redis for local development: seat and capacity holds (see
+# backend/src/services/lockService.ts).
+#
+# Published on 6380, not the default 6379, because another project on this
+# machine already binds 6379. REDIS_URL in backend/.env must match this port.
+#
+#   docker compose up -d      start
+#   docker compose down       stop and remove (keeps the volume)
+#   docker compose down -v    stop and discard held data too
+#
+# Holds are ephemeral by design -- every key carries a TTL, and losing them
+# only makes seats available again, never double-bookable. The named volume is
+# therefore a convenience, not a safety requirement.
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: encore-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - encore-redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  encore-redis-data:

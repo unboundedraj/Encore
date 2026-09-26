@@ -31,6 +31,13 @@ encore/
 
 - Node.js 20+
 - npm 10+
+- Docker (for local Redis)
+
+### Redis
+
+Seat holds need Redis. From `backend/`, `docker compose up -d` starts it on
+port 6380 — 6379 is deliberately avoided because it is commonly already taken.
+`REDIS_URL` in `backend/.env` must point at the same port.
 
 ### Install
 
