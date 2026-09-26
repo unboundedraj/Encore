@@ -1,26 +1,68 @@
 @import "tailwindcss";
 
+/**
+ * Dark mode is opt-in via a `.dark` ancestor rather than the OS setting.
+ *
+ * Tailwind's default `dark:` variant is prefers-color-scheme, and this theme is
+ * a single fixed light palette with dark hero bands -- the way a ticketing site
+ * actually looks. Leaving the media-query default on would let a visitor whose
+ * OS is in dark mode get the old dark treatments layered over the new light
+ * chrome, half-styled. Nothing adds `.dark`, so existing `dark:` classes on
+ * older components are simply inert rather than needing to be stripped out one
+ * by one.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Page chrome */
+  --background: #f2f3f5;
+  --foreground: #1f2533;
+  --surface: #ffffff;
+  --muted: #5c6274;
+  --hairline: #e3e5ea;
+
+  /* Dark bands: header, footer, and the hero strip on a title page. */
+  --ink: #1f2533;
+  --ink-2: #2b3148;
+  --ink-3: #333545;
+
+  /* The one accent. Used for CTAs, prices and the selected state. */
+  --accent: #f84464;
+  --accent-dark: #d93a56;
+
+  --ok: #1ea672;
+  --warn: #f0a12e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-hairline: var(--hairline);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Horizontal rails (poster carousels) scroll without a visible scrollbar, the
+   way an app would. Keyboard and touch scrolling are unaffected. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
