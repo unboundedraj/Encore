@@ -108,8 +108,12 @@ real Stripe account:
 - **Register a real webhook endpoint** in the Stripe Dashboard (Developers →
   Webhooks) pointing at the deployed backend's `/api/webhooks/stripe`, and use
   *that* endpoint's signing secret for `STRIPE_WEBHOOK_SECRET`. The `whsec_...`
-  value `stripe listen` prints locally is unique to that CLI session and does
-  not work once you're no longer forwarding through it.
+  `stripe listen` prints locally is tied to your account and stays valid across
+  CLI restarts -- what stops working in production isn't the secret, it's the
+  CLI itself: nobody runs a permanent local tunnel for a deployed backend, so
+  Stripe has nowhere to forward events to once `stripe listen` isn't running.
+  A Dashboard-registered endpoint gets its own distinct secret and needs no
+  CLI running at all.
 - **Revisit the pinned Stripe API version** (`apiVersion` in
   `backend/src/config/stripe.ts`, currently `2026-08-26.dahlia`) if the Stripe
   CLI or SDK gets upgraded later — it has to stay in sync with whatever version
