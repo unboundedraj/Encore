@@ -1,0 +1,3 @@
+{
+  "buildCommand": "cd .. && npm run build -w shared && npm run build -w frontend"
+}
