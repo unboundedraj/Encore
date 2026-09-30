@@ -4,6 +4,7 @@ import { CityLink } from "@/components/CityLink";
 import { ContentCard } from "@/components/ContentCard";
 import { getSelectedCity } from "@/lib/city-server";
 import { fetchCities, fetchContentList } from "@/lib/content-api";
+import type { CitySummary, ContentType, Movie, Event } from "shared";
 
 export const metadata = {
   title: "Encore — Movies, comedy & live events across India",
@@ -56,7 +57,7 @@ export default async function LandingPage() {
   // a listing app's marketing page shows a wall of what's on rather than a
   // flat color. Falls back to nothing gracefully if the catalog is briefly
   // empty -- the hero still reads fine as a solid dark band.
-  const backdropPosters = trending.items.slice(0, 6).map((item) => item.posterUrl);
+  const backdropPosters = trending.items.slice(0, 6).map((item: Movie | Event) => item.posterUrl);
 
   return (
     <main className="flex-1">
@@ -64,7 +65,7 @@ export default async function LandingPage() {
       <section className="relative overflow-hidden bg-ink-3 text-white">
         {backdropPosters.length > 0 ? (
           <div className="absolute inset-0 grid grid-cols-3 sm:grid-cols-6" aria-hidden="true">
-            {backdropPosters.map((src, i) => (
+            {backdropPosters.map((src: string, i: number) => (
               <div key={src + i} className="relative">
                 <Image
                   src={src}
@@ -141,7 +142,7 @@ export default async function LandingPage() {
             </Link>
           </div>
           <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 no-scrollbar sm:-mx-6 sm:px-6">
-            {trending.items.map((item) => (
+            {trending.items.map((item: Movie | Event) => (
               <div key={item._id} className="w-36 shrink-0 sm:w-44">
                 <ContentCard item={item} />
               </div>
@@ -178,7 +179,7 @@ export default async function LandingPage() {
             <h2 className="text-2xl font-bold tracking-tight">Choose your city</h2>
             <p className="mt-1 text-sm text-muted">Tap a city to see what&rsquo;s playing there.</p>
             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {cities.map((c) => (
+              {cities.map((c: CitySummary) => (
                 <CityLink
                   key={c.city}
                   city={c.city}
