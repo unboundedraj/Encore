@@ -9,60 +9,38 @@
  *
  * Only upcoming shows count. A city whose every show has already started is
  * not somewhere you can book, and listing it would produce an empty catalog
- * that reads as breakage rather than as "nothing on".
+ * that reads as breakage rather than as "nothing on". "Upcoming" means inside
+ * the same horizon the showtimes list uses, so a title is never listed in a
+ * city whose showtimes page for it would then come up empty.
+ *
+ * Both questions are answered by the database (GROUP BY / DISTINCT) over a
+ * direct connection rather than by pulling shows through PostgREST and
+ * reducing them here. This used to read every upcoming show row, which was fine
+ * for a week of fixtures -- but PostgREST silently caps a response at 1000 rows,
+ * and with a rolling two-month schedule there are several times that. A capped
+ * read does not fail; it quietly drops cities and titles, which is the worst
+ * way for this to break.
  */
 
 import type { CitySummary } from "shared";
-import { supabase } from "../config/supabase";
-
-/** Rows PostgREST returns for the joined show -> venue read below. */
-interface ShowCityRow {
-  content_id: string;
-  venue_id: string;
-  encore_venues: { city: string } | null;
-}
-
-/**
- * Every upcoming show, reduced to the three fields the city questions need.
- *
- * One query serves both callers here. The alternative -- a distinct-city query
- * and a separate content_ids-by-city query -- would be two round trips to
- * answer two halves of the same question, and PostgREST cannot express
- * SELECT DISTINCT or a GROUP BY without a database view or RPC. At seed and
- * demo scale the row count is trivial; if this ever grew, a view would be the
- * place to put it rather than more round trips.
- */
-async function upcomingShowCities(): Promise<ShowCityRow[]> {
-  const { data, error } = await supabase
-    .from("encore_shows")
-    .select("content_id, venue_id, encore_venues(city)")
-    .gte("start_time", new Date().toISOString());
-
-  if (error) throw new Error(`Failed to read show cities: ${error.message}`);
-  return (data ?? []) as unknown as ShowCityRow[];
-}
+import { getPool } from "../config/postgres";
+import { SHOWTIME_HORIZON_DAYS } from "../config/showtimes";
 
 /** Cities that currently have something on, most shows first. */
 export async function listCities(): Promise<CitySummary[]> {
-  const rows = await upcomingShowCities();
-
-  const byCity = new Map<string, { shows: number; venues: Set<string> }>();
-  for (const row of rows) {
-    const city = row.encore_venues?.city;
-    if (!city) continue;
-    const entry = byCity.get(city) ?? { shows: 0, venues: new Set<string>() };
-    entry.shows += 1;
-    entry.venues.add(row.venue_id);
-    byCity.set(city, entry);
-  }
-
-  return [...byCity.entries()]
-    .map(([city, { shows, venues }]) => ({
-      city,
-      show_count: shows,
-      venue_count: venues.size,
-    }))
-    .sort((a, b) => b.show_count - a.show_count || a.city.localeCompare(b.city));
+  const { rows } = await getPool().query<{ city: string; show_count: number; venue_count: number }>(
+    `select v.city,
+            count(*)::int as show_count,
+            count(distinct s.venue_id)::int as venue_count
+       from encore_shows s
+       join encore_venues v on v.id = s.venue_id
+      where s.start_time >= now()
+        and s.start_time < now() + make_interval(days => $1)
+      group by v.city
+      order by show_count desc, v.city asc`,
+    [SHOWTIME_HORIZON_DAYS]
+  );
+  return rows;
 }
 
 /**
@@ -80,10 +58,14 @@ export async function contentIdsInCity(city: string): Promise<string[]> {
   const wanted = city.trim().toLowerCase();
   if (!wanted) return [];
 
-  const rows = await upcomingShowCities();
-  const ids = new Set<string>();
-  for (const row of rows) {
-    if (row.encore_venues?.city?.toLowerCase() === wanted) ids.add(row.content_id);
-  }
-  return [...ids];
+  const { rows } = await getPool().query<{ content_id: string }>(
+    `select distinct s.content_id
+       from encore_shows s
+       join encore_venues v on v.id = s.venue_id
+      where s.start_time >= now()
+        and s.start_time < now() + make_interval(days => $1)
+        and lower(v.city) = $2`,
+    [SHOWTIME_HORIZON_DAYS, wanted]
+  );
+  return rows.map((r) => r.content_id);
 }

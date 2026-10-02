@@ -13,6 +13,7 @@ import type {
   ShowListItem,
 } from "shared";
 import { supabase } from "../config/supabase";
+import { SHOWTIME_HORIZON_DAYS } from "../config/showtimes";
 import { getSeatHolders, readGeneralHolds } from "./lockService";
 
 const CONTENT_ID = /^[0-9a-f]{24}$/;
@@ -35,7 +36,10 @@ export class ShowNotAssignedError extends Error {
 }
 
 /**
- * Upcoming shows for one piece of content, newest first by start time.
+ * Upcoming shows for one piece of content, soonest first, within the listing
+ * horizon. Bounding it matters beyond tidiness: shows are scheduled months
+ * ahead, and PostgREST caps a response at 1000 rows, so an unbounded read of a
+ * popular title would silently lose its later days.
  *
  * `city` filters to venues in that city. It is applied in application code
  * rather than as a PostgREST filter on the embedded venue, because filtering
@@ -54,6 +58,7 @@ export async function listShowsForContent(
     )
     .eq("content_id", contentId)
     .gte("start_time", new Date().toISOString())
+    .lt("start_time", new Date(Date.now() + SHOWTIME_HORIZON_DAYS * 86_400_000).toISOString())
     .order("start_time", { ascending: true });
 
   if (error) throw new Error(`Failed to list shows: ${error.message}`);
