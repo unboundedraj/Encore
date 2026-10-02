@@ -12,6 +12,7 @@ import meRoutes from "./routes/me.routes";
 import showRoutes from "./routes/show.routes";
 import webhookRoutes from "./routes/webhook.routes";
 import { startBookingSweep } from "./services/bookingSweep";
+import { startShowTopUp } from "./services/showTopUp";
 
 const app = express();
 
@@ -47,6 +48,7 @@ connectMongo().catch((err: Error) => console.error(err.message));
 connectRedis().catch((err: Error) => console.error(`[redis] ${err.message}`));
 
 const sweep = startBookingSweep();
+const topUp = startShowTopUp();
 
 const server = app.listen(env.port, () => {
   console.log(`Server running on port ${env.port}`);
@@ -56,6 +58,7 @@ const server = app.listen(env.port, () => {
 for (const signal of ["SIGINT", "SIGTERM"] as const) {
   process.once(signal, () => {
     clearInterval(sweep);
+    clearInterval(topUp);
     server.close(() => process.exit(0));
   });
 }
