@@ -16,6 +16,7 @@
     "test:locks": "ts-node --transpile-only src/tests/lockRace.ts",
     "test:checkout": "ts-node --transpile-only src/tests/checkoutWebhook.ts",
     "test:checkout:live": "ts-node --transpile-only src/tests/checkoutLive.ts",
+    "seed:tmdb": "ts-node --transpile-only src/scripts/fetchTmdb.ts",
     "seed:content": "ts-node --transpile-only src/scripts/seedContent.ts",
     "seed:shows": "ts-node --transpile-only src/scripts/seedShows.ts"
   },

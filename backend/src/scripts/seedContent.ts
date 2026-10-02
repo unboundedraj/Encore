@@ -1,6 +1,7 @@
 /**
- * Seeds the MongoDB catalog with a realistic Indian listing: films across five
- * languages, standup, live music, theatre and sport.
+ * Seeds the MongoDB catalog: real Indian films (from the TMDB snapshot, see
+ * fetchTmdb.ts) across nine languages, plus standup, live music, theatre and
+ * sport. Event artwork is still placeholder; films use TMDB posters.
  *
  * Ids are fixed rather than generated, which makes the script idempotent (a
  * re-run replaces exactly what it wrote before, never duplicating) and keeps
@@ -13,11 +14,10 @@
  * raw, so every one of them passes the same validation a real write would --
  * which makes this a check on the schema as well as a fixture loader.
  *
- * Posters are picsum.photos placeholders seeded by slug, so each title gets a
- * stable, distinct image without anyone sourcing real artwork. Titles and
- * performers are recognisably Indian so the catalog reads like a real listing
- * rather than lorem ipsum; nothing here corresponds to an actual scheduled
- * event.
+ * Film titles, cast and posters are real, from TMDB. Event posters are
+ * picsum.photos placeholders seeded by slug (there is no open artwork API for
+ * comedians and musicians). Performers are real, but every date, venue and
+ * price is a fixture: nothing here corresponds to an actual scheduled event.
  *
  * Run with: npm run seed:content -w backend
  */
@@ -25,6 +25,7 @@
 import "dotenv/config";
 import { connectMongo, disconnectMongo } from "../config/mongodb";
 import { ContentModel, EventModel, MovieModel, type EventDoc, type MovieDoc } from "../models/Content";
+import { LEGACY_MOVIE_IDS, TMDB_MOVIES, tmdbContentId } from "./data/catalog";
 
 const poster = (slug: string) => `https://picsum.photos/seed/${slug}/400/600`;
 const TRAILER = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
@@ -37,203 +38,18 @@ const TRAILER = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
  */
 type Seed<T> = Omit<T, "createdAt" | "updatedAt"> & { _id: string };
 
-const MOVIES: Seed<MovieDoc>[] = [
-  {
-    _id: "65f1a2b3c4d5e6f701000001",
-    type: "movie",
-    title: "Kaalchakra",
-    description:
-      "A Mumbai homicide detective investigating a series of staged suicides realises every victim shared a train compartment on the night of the 2006 floods.",
-    posterUrl: poster("kaalchakra"),
-    trailerUrl: TRAILER,
-    genres: ["Thriller", "Crime", "Mystery"],
-    durationMinutes: 148,
-    cast: ["Rajkummar Rao", "Konkona Sen Sharma", "Jaideep Ahlawat"],
-    language: "hi",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f701000002",
-    type: "movie",
-    title: "Monsoon Letters",
-    description:
-      "Two estranged sisters reopen their grandmother's bookshop in Fort Kochi and find sixty years of unsent correspondence stacked behind the Malayalam poetry shelf.",
-    posterUrl: poster("monsoon-letters"),
-    trailerUrl: null,
-    genres: ["Drama", "Family"],
-    durationMinutes: 118,
-    cast: ["Parvathy Thiruvothu", "Nimisha Sajayan", "Fahadh Faasil"],
-    language: "ml",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f701000003",
-    type: "movie",
-    title: "Vetri Nagaram",
-    description:
-      "A Madurai auto driver wins a district kabaddi trial and discovers the selection was fixed against the one player who could beat him.",
-    posterUrl: poster("vetri-nagaram"),
-    trailerUrl: TRAILER,
-    genres: ["Sports", "Drama", "Action"],
-    durationMinutes: 156,
-    cast: ["Dhanush", "Aishwarya Rajesh", "Soori"],
-    language: "ta",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f701000004",
-    type: "movie",
-    title: "Chai, Biscuit, Revolution",
-    description:
-      "Four friends running a failing tea stall outside a Lucknow coaching centre accidentally become the face of a student movement.",
-    posterUrl: poster("chai-biscuit"),
-    trailerUrl: TRAILER,
-    genres: ["Comedy", "Drama"],
-    durationMinutes: 132,
-    cast: ["Vijay Varma", "Sanya Malhotra", "Pankaj Tripathi"],
-    language: "hi",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f701000005",
-    type: "movie",
-    title: "Samudram",
-    description:
-      "A Visakhapatnam trawler captain takes a contract he cannot refuse and finds his crew a hundred nautical miles from anyone who can help.",
-    posterUrl: poster("samudram"),
-    trailerUrl: TRAILER,
-    genres: ["Action", "Thriller"],
-    durationMinutes: 164,
-    cast: ["Rana Daggubati", "Sai Pallavi", "Jagapathi Babu"],
-    language: "te",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f701000006",
-    type: "movie",
-    title: "Night Shift at Marine Drive",
-    description:
-      "An ambulance driver working the graveyard shift keeps picking up the same passenger from the same stretch of sea wall.",
-    posterUrl: poster("marine-drive"),
-    trailerUrl: TRAILER,
-    genres: ["Horror", "Mystery"],
-    durationMinutes: 109,
-    cast: ["Radhika Apte", "Adarsh Gourav"],
-    language: "hi",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f701000007",
-    type: "movie",
-    title: "Bengaluru Traffic",
-    description:
-      "Six strangers stuck on the Outer Ring Road for nine hours discover they are all on their way to the same funeral.",
-    posterUrl: poster("bengaluru-traffic"),
-    trailerUrl: TRAILER,
-    genres: ["Comedy", "Drama"],
-    durationMinutes: 127,
-    cast: ["Rakshit Shetty", "Rashmika Mandanna", "Achyuth Kumar"],
-    language: "kn",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f701000008",
-    type: "movie",
-    title: "The Last Ledger",
-    description:
-      "A forensic accountant auditing a cooperative bank in Nashik finds a second set of books written in her late father's hand.",
-    posterUrl: poster("last-ledger"),
-    trailerUrl: null,
-    genres: ["Drama", "Thriller"],
-    durationMinutes: 141,
-    cast: ["Tabu", "Manoj Bajpayee", "Shefali Shah"],
-    language: "hi",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f701000009",
-    type: "movie",
-    title: "Pushpavalli Returns",
-    description:
-      "A wedding planner with a perfect record takes on the one ceremony she swore she would never touch: her own.",
-    posterUrl: poster("pushpavalli-returns"),
-    trailerUrl: TRAILER,
-    genres: ["Romance", "Comedy"],
-    durationMinutes: 124,
-    cast: ["Sanya Malhotra", "Abhishek Banerjee", "Sheeba Chaddha"],
-    language: "hi",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f70100000a",
-    type: "movie",
-    title: "Silk Route",
-    description:
-      "A Kolkata textile heir traces a shipment of counterfeit sarees back through four countries and one family secret.",
-    posterUrl: poster("silk-route"),
-    trailerUrl: TRAILER,
-    genres: ["Drama", "Mystery"],
-    durationMinutes: 152,
-    cast: ["Jisshu Sengupta", "Swastika Mukherjee", "Ritwick Chakraborty"],
-    language: "bn",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f70100000b",
-    type: "movie",
-    title: "Antariksh",
-    description:
-      "India's first crewed lunar mission loses contact forty seconds before descent, and a retired engineer in Thiruvananthapuram is the only one who knows why.",
-    posterUrl: poster("antariksh"),
-    trailerUrl: TRAILER,
-    genres: ["Sci-Fi", "Drama"],
-    durationMinutes: 159,
-    cast: ["R. Madhavan", "Vidya Balan", "Mohanlal"],
-    language: "hi",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f70100000c",
-    type: "movie",
-    title: "Dhaba Diaries",
-    description:
-      "A Michelin-trained chef inherits her grandfather's highway dhaba on NH-44 and cannot bring herself to change a single recipe.",
-    posterUrl: poster("dhaba-diaries"),
-    trailerUrl: null,
-    genres: ["Drama", "Family"],
-    durationMinutes: 113,
-    cast: ["Bhumi Pednekar", "Kumud Mishra"],
-    language: "hi",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f70100000d",
-    type: "movie",
-    title: "Vanaputra",
-    description:
-      "An Ayodhya scooter mechanic learns his blood carries an old vanara oath the night a black-market relic ring wakes something that was supposed to stay sealed.",
-    posterUrl: poster("vanaputra"),
-    trailerUrl: TRAILER,
-    genres: ["Mythology", "Action", "Fantasy"],
-    durationMinutes: 149,
-    cast: ["Vijay Deverakonda", "Nayanthara", "Prakash Raj"],
-    language: "te",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f70100000e",
-    type: "movie",
-    title: "Purvanchal",
-    description:
-      "A small-time coal contractor inherits his murdered uncle's seat at the table, and three rival clans and a bought SP all decide he is exactly the puppet they need. He decides otherwise.",
-    posterUrl: poster("purvanchal"),
-    trailerUrl: TRAILER,
-    genres: ["Crime", "Drama", "Action"],
-    durationMinutes: 162,
-    cast: ["Randeep Hooda", "Huma Qureshi", "Raghubir Yadav"],
-    language: "hi",
-  },
-  {
-    _id: "65f1a2b3c4d5e6f70100000f",
-    type: "movie",
-    title: "Mahamari",
-    description:
-      "Six hours after a containment breach at a Pune biotech park, a night-shift security guard and a stranded delivery rider are the last two people inside the perimeter fence who are not yet infected.",
-    posterUrl: poster("mahamari"),
-    trailerUrl: TRAILER,
-    genres: ["Horror", "Sci-Fi", "Thriller"],
-    durationMinutes: 118,
-    cast: ["Vikrant Massey", "Shweta Tripathi Sharma", "Amit Sadh"],
-    language: "hi",
-  },
-];
+const MOVIES: Seed<MovieDoc>[] = TMDB_MOVIES.map((m) => ({
+  _id: tmdbContentId(m.tmdbId),
+  type: "movie" as const,
+  title: m.title,
+  description: m.description,
+  posterUrl: m.posterUrl,
+  trailerUrl: m.trailerUrl,
+  genres: m.genres,
+  durationMinutes: m.durationMinutes,
+  cast: m.cast,
+  language: m.language,
+}));
 
 const EVENTS: Seed<EventDoc>[] = [
   {
@@ -416,6 +232,102 @@ const EVENTS: Seed<EventDoc>[] = [
     performer: "Abhishek Upmanyu",
     category: "standup",
   },
+  {
+    _id: "65f1a2b3c4d5e6f702000010",
+    type: "event",
+    title: "Vir Das: Live in Concert",
+    description:
+      "An hour of observational standup on travel, fatherhood and being Indian in every room he walks into, from the comedian who took Indian comedy to a global stage.",
+    posterUrl: poster("vir-das-live"),
+    trailerUrl: null,
+    genres: ["Standup", "English"],
+    performer: "Vir Das",
+    category: "standup",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000011",
+    type: "event",
+    title: "Aakash Gupta: Open Book",
+    description:
+      "Crowd-work-heavy standup built around Delhi, family WhatsApp groups and the dangers of reading the comments.",
+    posterUrl: poster("aakash-gupta-open-book"),
+    trailerUrl: null,
+    genres: ["Standup", "Hindi"],
+    performer: "Aakash Gupta",
+    category: "standup",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000012",
+    type: "event",
+    title: "Tanmay Bhat: Late Night Set",
+    description:
+      "A loose, late-evening set on internet fame, podcasts and the economics of being chronically online.",
+    posterUrl: poster("tanmay-bhat-late-night"),
+    trailerUrl: null,
+    genres: ["Standup", "Hindi", "English"],
+    performer: "Tanmay Bhat",
+    category: "standup",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000013",
+    type: "event",
+    title: "Anuv Jain: Live",
+    description:
+      "Soft guitar, quiet rooms and a few thousand people singing every word of Gul and Alag Aasmaan back at him.",
+    posterUrl: poster("anuv-jain-live"),
+    trailerUrl: null,
+    genres: ["Indie", "Acoustic", "Hindi"],
+    performer: "Anuv Jain",
+    category: "concert",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000014",
+    type: "event",
+    title: "Arijit Singh: Live in Concert",
+    description:
+      "Two hours across a decade of Hindi film music, from Tum Hi Ho to Kesariya, with a full live band.",
+    posterUrl: poster("arijit-singh-live"),
+    trailerUrl: null,
+    genres: ["Bollywood", "Playback"],
+    performer: "Arijit Singh",
+    category: "concert",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000015",
+    type: "event",
+    title: "Diljit Dosanjh: Live",
+    description:
+      "Punjabi pop at stadium volume: Lover, Patiala Peg and the entire Dil-Luminati setlist, with a dhol section on stage.",
+    posterUrl: poster("diljit-dosanjh-live"),
+    trailerUrl: null,
+    genres: ["Punjabi", "Pop"],
+    performer: "Diljit Dosanjh",
+    category: "concert",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000016",
+    type: "event",
+    title: "Shreya Ghoshal: Live",
+    description:
+      "A voice-led evening across Hindi, Bengali, Tamil and Marathi film songs, backed by a thirty-piece orchestra.",
+    posterUrl: poster("shreya-ghoshal-live"),
+    trailerUrl: null,
+    genres: ["Bollywood", "Playback", "Classical"],
+    performer: "Shreya Ghoshal",
+    category: "concert",
+  },
+  {
+    _id: "65f1a2b3c4d5e6f702000017",
+    type: "event",
+    title: "Sunburn Arena: Nucleya",
+    description:
+      "Bass-heavy Indian electronic, folk samples over trap drops, a full-light-rig Saturday night.",
+    posterUrl: poster("sunburn-arena-nucleya"),
+    trailerUrl: null,
+    genres: ["Electronic", "Desi Bass"],
+    performer: "Nucleya",
+    category: "concert",
+  },
 ];
 
 async function main() {
@@ -427,7 +339,9 @@ async function main() {
   // Replace rather than upsert: a changed discriminator (movie -> event) on a
   // reused id cannot be applied by an update, and deleting first also clears
   // fields removed from a seed entry rather than leaving them behind.
-  const removed = await ContentModel.deleteMany({ _id: { $in: [...movieIds, ...eventIds] } });
+  const removed = await ContentModel.deleteMany({
+    _id: { $in: [...movieIds, ...eventIds, ...LEGACY_MOVIE_IDS] },
+  });
   console.log(`removed ${removed.deletedCount} previously seeded document(s)`);
 
   await MovieModel.insertMany(MOVIES);

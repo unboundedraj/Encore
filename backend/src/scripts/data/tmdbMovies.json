@@ -1,0 +1,625 @@
+[
+  {
+    "tmdbId": 1451944,
+    "title": "Lust Stories 3",
+    "description": "Through four bite-sized yet emotionally resonant films, the anthology once again explores lust, love, relationships, and repressed desire, offering fresh perspectives on intimacy, longing, and human connection in all their complexity.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/cLA83DD1qMEBwbRIYXf29RKjMja.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Romance",
+      "Drama"
+    ],
+    "durationMinutes": 165,
+    "cast": [
+      "Radhika Apte",
+      "Konkona Sen Sharma",
+      "Vijay Varma"
+    ],
+    "language": "hi",
+    "releaseDate": "2026-09-18"
+  },
+  {
+    "tmdbId": 1709391,
+    "title": "Hanuman Ansh",
+    "description": "A grieving boy seeks God to meet his departed mother, and in finding the divine, learns to serve humanity with miracles of love, food and silent blessings, becoming Hanuman Ansh, Neem Karoli Baba.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/as2Y3zGUa2IUS3uAx2sh6Ano3es.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=YpGhCA2X3gU",
+    "genres": [
+      "Family",
+      "Drama"
+    ],
+    "durationMinutes": 150,
+    "cast": [
+      "Chandan Anand",
+      "Shobhinaw Satyaa",
+      "Purnima Tiwari"
+    ],
+    "language": "hi",
+    "releaseDate": "2026-08-07"
+  },
+  {
+    "tmdbId": 1355228,
+    "title": "Gandhari",
+    "description": "When a mother loses her eyesight and her daughter in a kidnapping, she takes matters into her own hands to hunt down those responsible.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/hCHei97aPYCCsh4vicz9X0wmdFV.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=TRyBiPD1bUc",
+    "genres": [
+      "Action",
+      "Drama",
+      "Thriller"
+    ],
+    "durationMinutes": 117,
+    "cast": [
+      "Taapsee Pannu",
+      "Ishwak Singh",
+      "Mita Vashisht"
+    ],
+    "language": "hi",
+    "releaseDate": "2026-09-03"
+  },
+  {
+    "tmdbId": 1444466,
+    "title": "Awarapan 2",
+    "description": "Shivam returns to the crime world, where his path forward demands redemption, love, and sacrifice. As relationships deepen and conflicts intensify, every choice tests his resolve and shapes his destiny.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/lD3J6zTbWkVtPYuSUuuBwpuKMCO.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=1ya87ENCRj0",
+    "genres": [
+      "Action",
+      "Drama",
+      "Romance"
+    ],
+    "durationMinutes": 142,
+    "cast": [
+      "Emraan Hashmi",
+      "Shabana Azmi",
+      "Disha Patani"
+    ],
+    "language": "hi",
+    "releaseDate": "2026-08-14"
+  },
+  {
+    "tmdbId": 1375156,
+    "title": "Udta Teer",
+    "description": "An amnesiac Pakistani spy wakes up believing he is a patriotic Indian counter-terrorism officer.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/tvICKypVlW7Iio4KVs7NousbSKi.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Comedy"
+    ],
+    "durationMinutes": 144,
+    "cast": [
+      "Ayushmann Khurrana",
+      "Sara Ali Khan",
+      "Rahul Bose"
+    ],
+    "language": "hi",
+    "releaseDate": "2026-10-09"
+  },
+  {
+    "tmdbId": 1529372,
+    "title": "Don't Be Shy!",
+    "description": "Quintessential Mean Girl, Shyamili ‘Shy’ Das, finds herself suddenly relegated to Loser-ville when Mayank, her boyfriend of three years, suddenly dumps her. But Shy, all set to get her revenge, finds herself falling into friendship and compassion with someone unexpected… Mayank’s new girlfriend - Tara.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/lBeDq7KmZaQNnnIXgExCAmfLMqT.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=SWGSmIdhn2I",
+    "genres": [
+      "Romance",
+      "Comedy"
+    ],
+    "durationMinutes": 149,
+    "cast": [
+      "Arushi Bajaj",
+      "Ansh Duggal",
+      "Bianca Arora"
+    ],
+    "language": "hi",
+    "releaseDate": "2026-09-25"
+  },
+  {
+    "tmdbId": 1122030,
+    "title": "Alpha",
+    "description": "When Sita, a highly trained assassin raised in isolation as a super-soldier by a rogue commander, discovers the dark truth about her family and her stolen childhood, she teams up with her long lost sister to take down her creator and his illicit military program.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/bPtRt3ajQ0EkyeQ1O6iJwAIi9Py.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=YP1uSAggr6Y",
+    "genres": [
+      "Action",
+      "Thriller"
+    ],
+    "durationMinutes": 141,
+    "cast": [
+      "Alia Bhatt",
+      "Sharvari",
+      "Bobby Deol"
+    ],
+    "language": "hi",
+    "releaseDate": "2026-07-02"
+  },
+  {
+    "tmdbId": 1378537,
+    "title": "Mirzapur: The Movie",
+    "description": "The battle for Mirzapur’s throne intensifies as old enemies resurface and a new threat emerges in the form of Babban Babua, a ruthless businessman from Jaisalmer with ambitions of his own. As the Tripathis face enemies from both the past and present, loyalties are tested while Guddu and Bablu Pandit fight to establish themselves in the power struggle for Mirzapur.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/cdDKdCRyq6BYuNblpKUYqRPWvEg.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Action",
+      "Crime",
+      "Drama",
+      "Thriller"
+    ],
+    "durationMinutes": 197,
+    "cast": [
+      "Pankaj Tripathi",
+      "Ali Fazal",
+      "Divyendu Sharma"
+    ],
+    "language": "hi",
+    "releaseDate": "2026-09-03"
+  },
+  {
+    "tmdbId": 1582770,
+    "title": "Dhurandhar: The Revenge",
+    "description": "As rival gangs, corrupt officials and a ruthless Major Iqbal close in, Hamza's mission for his country spirals into a bloody personal war where the line between patriot and monster disappears in the streets of Lyari.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/ov8vrRLZGoXHpYjSY9Vpv1tHJX7.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=NHk7scrb_9I",
+    "genres": [
+      "Action",
+      "Crime",
+      "Thriller"
+    ],
+    "durationMinutes": 235,
+    "cast": [
+      "Ranveer Singh",
+      "Arjun Rampal",
+      "Rakesh Bedi"
+    ],
+    "language": "hi",
+    "releaseDate": "2026-03-18"
+  },
+  {
+    "tmdbId": 1376856,
+    "title": "The Paradise",
+    "description": "In 1980s Secunderabad, a marginalized tribe battles discrimination and fights for citizenship under an unexpected leader's guidance, challenging systemic oppression.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/smghVMoMWSIFi5dgIz4w1UIcEcY.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Action",
+      "Thriller",
+      "Drama"
+    ],
+    "durationMinutes": 174,
+    "cast": [
+      "Nani",
+      "Mohan Babu",
+      "Kayadu Lohar"
+    ],
+    "language": "te",
+    "releaseDate": "2026-09-23"
+  },
+  {
+    "tmdbId": 1441228,
+    "title": "Irumudi",
+    "description": "An alcoholic with a violent past—living peacefully with his daughter beside a waterfall—decides to take Ayyappa Deeksha (a 41-day spiritual vow and period of intense austerity) at her request.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/sPePQmJRKkB14sGjB7zBkLJkaTW.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=lqlYx4MdsAY",
+    "genres": [
+      "Drama",
+      "Family",
+      "Action"
+    ],
+    "durationMinutes": 152,
+    "cast": [
+      "Ravi Teja",
+      "Nakshathra C M",
+      "Priya Bhavani Shankar"
+    ],
+    "language": "te",
+    "releaseDate": "2026-08-20"
+  },
+  {
+    "tmdbId": 1057265,
+    "title": "Peddi",
+    "description": "In a village that doesn't officially exist, a laborer's unmatched athletic talent becomes his weapon to fight for his people's right to be recognized.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/kJAJNNBYlbqAcpTDxBNnaILSMTy.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=AdEE5xFQelY",
+    "genres": [
+      "Action",
+      "Drama"
+    ],
+    "durationMinutes": 189,
+    "cast": [
+      "Ram Charan",
+      "Janhvi Kapoor",
+      "Shiva Rajkumar"
+    ],
+    "language": "te",
+    "releaseDate": "2026-06-03"
+  },
+  {
+    "tmdbId": 1669281,
+    "title": "Romanchakam",
+    "description": "An entrepreneur hoping to make money off romance ends up falling in love. But when she blocks him on social media, he tries to reignite their spark.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/p8NASLkwMuWJMzncvNViscP6hgj.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=SuHxIe7g-i4",
+    "genres": [
+      "Romance",
+      "Comedy",
+      "Drama"
+    ],
+    "durationMinutes": 140,
+    "cast": [
+      "Sumanth Prabhas",
+      "Ananthika Sanilkumar",
+      "Upendra Limaye"
+    ],
+    "language": "te",
+    "releaseDate": "2026-09-02"
+  },
+  {
+    "tmdbId": 1560208,
+    "title": "Ramba Oorvasi Menaka",
+    "description": "A man spends 15 years attempting to use a magical book to summon the celestial angels Ramba, Urvasi, and Menaka to earth, but Lord Indra blocks their descent until they finally arrive.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/tPkKq60dSC12I3ARollNuZsY4Jv.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=xp3mBhXY8Y8",
+    "genres": [
+      "Comedy",
+      "Drama"
+    ],
+    "durationMinutes": 144,
+    "cast": [
+      "Allari Naresh",
+      "Surbhi",
+      "Naresh"
+    ],
+    "language": "te",
+    "releaseDate": "2026-09-04"
+  },
+  {
+    "tmdbId": 1538457,
+    "title": "Meesaya Murukku 2",
+    "description": "After facing rejection in love and getting into a fight, Jeeva learns about his father Siva's struggles and sacrifices. Inspired by his grandfather's legacy and father's dedication, Jeeva changes his outlook and works hard toward his musical dream. Through determination and perseverance, Jeeva earns recognition in the music industry and brings pride to his family.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/qD1QwmInB9ezd2peVb5EbhaM4Mo.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Comedy",
+      "Romance",
+      "Drama"
+    ],
+    "durationMinutes": 138,
+    "cast": [
+      "HipHop Tamizha Adhi",
+      "Ketika Sharma",
+      "Chaithra J Achar"
+    ],
+    "language": "ta",
+    "releaseDate": "2026-09-25"
+  },
+  {
+    "tmdbId": 1408162,
+    "title": "Vishwanath & Sons",
+    "description": "A celebrated Olympian shooter travels to America looking for a donor to help his sick child — but unexpected romance complicates his search.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/mLsvCffzpxxDwC7yVLJSLLjgzoq.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Drama",
+      "Romance",
+      "Comedy"
+    ],
+    "durationMinutes": 161,
+    "cast": [
+      "Suriya",
+      "Mamitha Baiju",
+      "Radhika Sarathkumar"
+    ],
+    "language": "ta",
+    "releaseDate": "2026-08-14"
+  },
+  {
+    "tmdbId": 1685882,
+    "title": "Modha Rathri",
+    "description": "Two strangers are brought together at an unusual wedding where, in one night, too many surprises unfold and several lies are told, spiraling into chaos that changes everything.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/3VuNFeniljhEe9MDW12MnDbETgH.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=UrWrvwIRnqk",
+    "genres": [
+      "Romance",
+      "Comedy"
+    ],
+    "durationMinutes": 141,
+    "cast": [
+      "Rishikanth",
+      "Anishma Anilkumar",
+      "Chetan"
+    ],
+    "language": "ta",
+    "releaseDate": "2026-08-21"
+  },
+  {
+    "tmdbId": 1314279,
+    "title": "Hi!",
+    "description": "Two individuals initially exchange a simple \"Hi,\" but through a series of chance encounters, shared experiences, and deep conversations, they gradually develop a strong connection and eventually fall in love.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/9Vgmpa0tcCzkbXf9AY0zXrai1oi.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=LVmH0rgWZb8",
+    "genres": [
+      "Romance",
+      "Drama"
+    ],
+    "durationMinutes": 143,
+    "cast": [
+      "Kavin Raj",
+      "Nayanthara",
+      "K. Bhagyaraj"
+    ],
+    "language": "ta",
+    "releaseDate": "2026-08-28"
+  },
+  {
+    "tmdbId": 1235877,
+    "title": "Jana Nayagan",
+    "description": "A clash of ideologies. One stands for the people, the other feeds on control. Their paths collided once before. Years later, a child’s silent fear ignites the past, drawing a former police officer into a battle far bigger than personal revenge.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/jt8pfSIdi47YpFMMWVRr8w5u2S0.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Action",
+      "Drama"
+    ],
+    "durationMinutes": 183,
+    "cast": [
+      "Vijay",
+      "Pooja Hegde",
+      "Bobby Deol"
+    ],
+    "language": "ta",
+    "releaseDate": "2026-07-22"
+  },
+  {
+    "tmdbId": 1036081,
+    "title": "Khalifa: The Ruler",
+    "description": "Aamir Ali, a notorious gold smuggling kingpin who inherited his multi-million dollar criminal enterprise from a lineage of gangsters, is drawn into a web of vengeance, legacy and power.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/cAl7uuRojdxysptYBj9Mg0czGmI.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Crime",
+      "Action"
+    ],
+    "durationMinutes": 157,
+    "cast": [
+      "Prithviraj Sukumaran",
+      "Mohanlal",
+      "Neil Nitin Mukesh"
+    ],
+    "language": "ml",
+    "releaseDate": "2026-08-20"
+  },
+  {
+    "tmdbId": 1508168,
+    "title": "Bethlehem Kudumba Unit",
+    "description": "Ashley's homecoming from abroad takes an emotional turn when a wedding next door stirs memories of her first love, Justin.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/35ugTVgk8UpGSgTPUFD1CEOooIe.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Romance",
+      "Comedy",
+      "Drama"
+    ],
+    "durationMinutes": 155,
+    "cast": [
+      "Nivin Pauly",
+      "Mamitha Baiju",
+      "Sangeeth Prathap"
+    ],
+    "language": "ml",
+    "releaseDate": "2026-08-21"
+  },
+  {
+    "tmdbId": 847742,
+    "title": "Drishyam 3",
+    "description": "To protect his family and their dark secret, Georgekutty faces an organized new threat. As walls close in and cracks widen, how much more is he willing to sacrifice?",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/456FlpiU1iOBnaOxSd783QhZKWw.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Crime",
+      "Drama",
+      "Thriller"
+    ],
+    "durationMinutes": 157,
+    "cast": [
+      "Mohanlal",
+      "Meena",
+      "Siddique"
+    ],
+    "language": "ml",
+    "releaseDate": "2026-05-21"
+  },
+  {
+    "tmdbId": 1250502,
+    "title": "I'm Game",
+    "description": "A fearless gambler who trusts luck more than life gets caught in a series of crazy and unexpected events that turn his world upside down.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/h1ezPKcMYv5FHbHDuHcZfTbWTY5.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Action",
+      "Thriller",
+      "Drama"
+    ],
+    "durationMinutes": 173,
+    "cast": [
+      "Dulquer Salmaan",
+      "Kayadu Lohar",
+      "Antony Varghese"
+    ],
+    "language": "ml",
+    "releaseDate": "2026-09-03"
+  },
+  {
+    "tmdbId": 1213243,
+    "title": "Toxic: A Fairy Tale for Grown-ups",
+    "description": "A powerful drug cartel pulls the strings behind a facade of sun-soaked beaches as a gritty, violent underworld power struggle emerges during the crumbling of Portuguese colonial rule.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/5RTd3YCLWbEhbe9OXRuNX3pbT5U.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=EfluEyQ5QIA",
+    "genres": [
+      "Action",
+      "Crime",
+      "Drama"
+    ],
+    "durationMinutes": 192,
+    "cast": [
+      "Yash",
+      "Kiara Advani",
+      "Nayanthara"
+    ],
+    "language": "kn",
+    "releaseDate": "2026-08-26"
+  },
+  {
+    "tmdbId": 1735270,
+    "title": "Premada Oorali",
+    "description": "Premada Oorali is a heartfelt love story set in picturesque villages in the 2020s. The film intertwines romance and family drama, exploring the relationships between a father and son, as well as a boy and girl, as they navigate through intriguing, yet relatable, relationship challenges.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/d3tfAVRB9baqZqFnV6wPvqZnuzi.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Romance",
+      "Music",
+      "Family",
+      "Drama"
+    ],
+    "durationMinutes": 155,
+    "cast": [
+      "Rangayana Raghu",
+      "Shri Mahadev",
+      "Thapaswini"
+    ],
+    "language": "kn",
+    "releaseDate": "2026-09-25"
+  },
+  {
+    "tmdbId": 1592821,
+    "title": "Mango Pachcha",
+    "description": "Set in Mysuru, a crime drama unfolds across a decade (2001-2011), following a chain of events that builds tension over time. The city's setting plays a key role in reflecting different phases across the years.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/ho0aScFTUy02dy6wA9IqAF9RFTd.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=_0QTmPVkssQ",
+    "genres": [
+      "Crime",
+      "Drama",
+      "Action"
+    ],
+    "durationMinutes": 95,
+    "cast": [
+      "Sanchith Sanjeev",
+      "Kaajal Kunder",
+      "Prashanth Hiremath"
+    ],
+    "language": "kn",
+    "releaseDate": "2026-06-05"
+  },
+  {
+    "tmdbId": 1542995,
+    "title": "Bonolota Express",
+    "description": "On a foggy winter journey, the Bonolota Express carries strangers burdened by secrets whose lives begin to collide within the train’s confined corridors. As the night unfolds, personal and political crises erupt, exposing hidden grief, moral decay, and moments of unexpected compassion amid chaos and revolt. By dawn, the train moves on, leaving its passengers irrevocably changed by a single journey where illusions collapse and human truths emerge.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/h6nITbbSobZ0EwU6Dcw6LGZOZYA.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=ZTZUaHsfR8o",
+    "genres": [
+      "Drama",
+      "Comedy",
+      "Family"
+    ],
+    "durationMinutes": 153,
+    "cast": [
+      "Mosharraf Karim",
+      "Chanchal Chowdhury",
+      "Sariful Razz"
+    ],
+    "language": "bn",
+    "releaseDate": "2026-03-21"
+  },
+  {
+    "tmdbId": 1488950,
+    "title": "Aajo Ardhangini",
+    "description": "Set against the backdrop of an unexpected wedding invitation, a chance reunion after two years of estrangement forces two women to confront their deeply entangled, hidden past. As their unresolved history resurfaces in the shadows of the Chatterjee household, an unsuspecting husband finds himself increasingly caught in a web of unspoken anxieties.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/cpaLGYgWmE6QKFzGxCx28dt2oLE.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=KSLnrA_1hIY",
+    "genres": [
+      "Family",
+      "Drama"
+    ],
+    "durationMinutes": 144,
+    "cast": [
+      "Churni Ganguly",
+      "Jaya Ahsan",
+      "Kaushik Sen"
+    ],
+    "language": "bn",
+    "releaseDate": "2026-07-10"
+  },
+  {
+    "tmdbId": 1774540,
+    "title": "MANJAR",
+    "description": "A youthful Marathi family entertainer about friendship, love, family relationships and the unpredictable situations of everyday life, seen through the amusing perspective of an observant cat.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/wlUkHJsiYHxEvnMDgjy28kt3EEr.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=LazZW7nD5B4",
+    "genres": [
+      "Comedy",
+      "Drama",
+      "Adventure"
+    ],
+    "durationMinutes": 134,
+    "cast": [
+      "Siddharth Menon",
+      "Onkar Bhojane",
+      "Tejas Raut"
+    ],
+    "language": "mr",
+    "releaseDate": "2026-09-18"
+  },
+  {
+    "tmdbId": 1608274,
+    "title": "Tighee",
+    "description": "Two estranged sisters are brought together when their mother falls ill. As they reunite under one roof after years apart, old memories help them understand each other again, until a secret their mother has kept for decades is revealed.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/jt6dTOtur23riqQYfahi7li4rWZ.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Drama"
+    ],
+    "durationMinutes": 107,
+    "cast": [
+      "Bharati Achrekar",
+      "Neha Pendse",
+      "Sonalee Kulkarni"
+    ],
+    "language": "mr",
+    "releaseDate": "2026-03-06"
+  },
+  {
+    "tmdbId": 1522333,
+    "title": "Carry On Jatta 4",
+    "description": "A romantic deception spirals into household chaos when a family must construct an elaborate web of lies to conceal a secret relationship.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/bKa9qAg71Kkjz0tOT1gxSAX9Nfv.jpg",
+    "trailerUrl": "https://www.youtube.com/watch?v=fsDBAr42UUg",
+    "genres": [
+      "Comedy"
+    ],
+    "durationMinutes": 142,
+    "cast": [
+      "Gippy Grewal",
+      "Binnu Dhillon",
+      "Jaswinder Bhalla"
+    ],
+    "language": "pa",
+    "releaseDate": "2026-06-26"
+  },
+  {
+    "tmdbId": 1706764,
+    "title": "Jindagi Once More",
+    "description": "A son discovers the legend his father once was, and sets out to bring him back.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/4gSERLr2vQ7u6OFGRo5mdSQHbre.jpg",
+    "trailerUrl": null,
+    "genres": [
+      "Drama"
+    ],
+    "durationMinutes": 143,
+    "cast": [
+      "Siddharth Randeria",
+      "Aarti Patel",
+      "Deep Dholakia"
+    ],
+    "language": "gu",
+    "releaseDate": "2026-06-19"
+  }
+]
