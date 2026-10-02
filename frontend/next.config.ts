@@ -5,9 +5,12 @@ const nextConfig: NextConfig = {
   images: {
     // next/image refuses remote hosts that are not listed here, so that a
     // compromised or mistaken poster URL cannot turn the optimizer into an open
-    // proxy for arbitrary images. picsum.photos serves the seed placeholders;
-    // replace this entry when real artwork gets a home.
-    remotePatterns: [{ protocol: "https", hostname: "picsum.photos" }],
+    // proxy for arbitrary images. image.tmdb.org serves real film posters and
+    // picsum.photos the placeholder event artwork.
+    remotePatterns: [
+      { protocol: "https", hostname: "image.tmdb.org" },
+      { protocol: "https", hostname: "picsum.photos" },
+    ],
   },
 };
 

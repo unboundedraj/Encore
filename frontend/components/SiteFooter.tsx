@@ -19,6 +19,9 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
   );
 }
 
+// The footer lists the biggest markets only; the header picker has them all.
+const FOOTER_CITY_COUNT = 8;
+
 const linkClassName = "text-sm text-white/70 transition-colors hover:text-white";
 
 /**
@@ -43,7 +46,7 @@ export function SiteFooter() {
               en<span className="text-accent">core</span>
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed">
-              Movie tickets, standup comedy and live events across seven Indian cities.
+              Movie tickets, standup comedy and live events across {POPULAR_CITIES.length} Indian cities.
             </p>
           </div>
 
@@ -58,7 +61,7 @@ export function SiteFooter() {
           </FooterColumn>
 
           <FooterColumn title="Cities">
-            {POPULAR_CITIES.map((city) => (
+            {POPULAR_CITIES.slice(0, FOOTER_CITY_COUNT).map((city) => (
               <li key={city}>
                 <CityLink city={city} className={linkClassName}>
                   {city}
@@ -97,9 +100,21 @@ export function SiteFooter() {
             development — nothing listed is a real scheduled event, and payments run against
             Stripe test mode.
           </p>
-          <p className="shrink-0 text-white/40">
-            Built with Next.js, Express, Postgres, MongoDB, Redis &amp; Stripe.
-          </p>
+          <div className="shrink-0 space-y-1 text-white/40 sm:text-right">
+            <p>Built with Next.js, Express, Postgres, MongoDB, Redis &amp; Stripe.</p>
+            <p>
+              Film data and posters from{" "}
+              <a
+                href="https://www.themoviedb.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-white"
+              >
+                TMDB
+              </a>
+              . This product uses the TMDB API but is not endorsed or certified by TMDB.
+            </p>
+          </div>
         </div>
       </div>
     </footer>

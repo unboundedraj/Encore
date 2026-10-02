@@ -30,6 +30,12 @@ export const POPULAR_CITIES = [
   "Chennai",
   "Kolkata",
   "Pune",
+  "Ahmedabad",
+  "Jaipur",
+  "Chandigarh",
+  "Lucknow",
+  "Kochi",
+  "Indore",
 ] as const;
 
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;

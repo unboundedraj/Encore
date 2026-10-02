@@ -9,11 +9,11 @@ import type { CitySummary, ContentType, Movie, Event } from "shared";
 export const metadata = {
   title: "Encore — Movies, comedy & live events across India",
   description:
-    "Book movie tickets, standup comedy, concerts and theatre across Mumbai, Delhi NCR, Bengaluru, Hyderabad, Chennai, Kolkata and Pune.",
+    "Book movie tickets, standup comedy, concerts and theatre across Mumbai, Delhi NCR, Bengaluru, Hyderabad, Chennai, Kolkata, Pune and more Indian cities.",
 };
 
 const CATEGORIES: { label: string; href: string; blurb: string }[] = [
-  { label: "Movies", href: "/browse?type=movie", blurb: "New releases, six languages" },
+  { label: "Movies", href: "/browse?type=movie", blurb: "New releases in nine languages" },
   { label: "Comedy", href: "/browse?type=event&category=standup", blurb: "Standup from India's best" },
   { label: "Concerts", href: "/browse?type=event&category=concert", blurb: "Live music, indie to arena" },
   { label: "Theatre", href: "/browse?type=event&category=play", blurb: "Plays, staged live" },
@@ -94,8 +94,8 @@ export default async function LandingPage() {
             Movies, comedy &amp; live events across India
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/70">
-            Book tickets for the latest films, standup specials and concerts in {city} and six
-            other cities — pick your seats, pay securely, done in a couple of minutes.
+            Book tickets for the latest films, standup specials and concerts in {city} and{" "}
+            {Math.max(cities.length - 1, 0)} other cities — pick your seats, pay securely, done in a couple of minutes.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
