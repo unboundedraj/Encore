@@ -43,17 +43,23 @@ type Outcome =
  * seat race and gets refunded (see webhook.controller.ts). This page shows
  * nothing as confirmed until the backend says so.
  */
-function useBookingOutcome(bookingId: string | null): Outcome {
+function useBookingOutcome(bookingId: string | null, enabled: boolean): Outcome {
   // Computed once, from the render that first mounts this hook, rather than
   // set synchronously inside the effect below -- that keeps the effect body
   // free of any setState call that isn't a response to something async.
+  //
+  // It depends on the URL alone, never on `enabled`. `enabled` is false while
+  // Firebase is still restoring the session, which on a slow network is a real
+  // window -- and since this initializer never runs again, gating it on auth
+  // would freeze "not found" into the state for a booking that is simply
+  // waiting for a sign-in to resolve, until the first poll finally answered.
   const [outcome, setOutcome] = useState<Outcome>(() =>
     bookingId ? { kind: "loading" } : { kind: "not_found" }
   );
   const attempts = useRef(0);
 
   useEffect(() => {
-    if (!bookingId) return;
+    if (!bookingId || !enabled) return;
 
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
@@ -96,7 +102,7 @@ function useBookingOutcome(bookingId: string | null): Outcome {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [bookingId]);
+  }, [bookingId, enabled]);
 
   return outcome;
 }
@@ -139,7 +145,7 @@ function SuccessContent() {
   const searchParams = useSearchParams();
   const bookingId = searchParams.get("booking_id");
   const { user, loading: authLoading } = useAuth();
-  const outcome = useBookingOutcome(user ? bookingId : null);
+  const outcome = useBookingOutcome(bookingId, Boolean(user));
 
   if (authLoading) {
     return <p className="text-sm text-muted">Loading…</p>;
